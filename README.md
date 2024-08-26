@@ -13,7 +13,8 @@ python -m venv .venv
 Open the command line and activate the virtual environment.
 
 ```bash
-source venv/bin/activate
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
 Create a `.env` file with the following contents.
