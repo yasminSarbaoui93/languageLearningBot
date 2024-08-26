@@ -11,7 +11,8 @@ bot = telebot.TeleBot(API_TOKEN)
 german_words = {
     "hello": "hallo",
     "goodbye": "auf wiedersehen",
-    "thanks": "danke"
+    "thanks": "danke",
+    "please": "bitte"
 }
 
 @bot.message_handler(commands=['start', 'help'])
