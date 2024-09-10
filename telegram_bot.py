@@ -1,6 +1,8 @@
 import os
+import random
 import telebot
 from dotenv import load_dotenv
+# Add excel terms
 
 # Load the environment variables
 load_dotenv()
@@ -27,10 +29,18 @@ def send_info(message):
 def send_info(message):
     bot.reply_to(message, "Goodbye! Have a nice day")
 
+@bot.message_handler(commands=['random'])
+def send_random_word(message):
+    random_word = random.choice(list(german_words.keys()))
+    print("Random word: " + random_word)
+    bot.reply_to(message, f"Translate this word: {random_word}")
+
 @bot.message_handler(func=lambda message: True)
 def echo_all(message):
     print("Message received:" + message.text)
     bot.reply_to(message, message.text)
+
+
 
 print("Bot is running")
 bot.polling()
