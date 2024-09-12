@@ -1,3 +1,5 @@
+#This file contains the functions that are used to get a random word from the dictionary and ask 
+#the user to translate it
 import random
 
 #Function that gets the translation of a word taken from the dictionary
@@ -14,7 +16,6 @@ def check_response(message, translation, bot):
         bot.reply_to(message, "Incorrect! ❌")
 
 # Function that asks the user to translate a random word from the dictionary
-#@bot.message_handler(commands=['random'])
 def send_random_word(bot, message, german_words):
     random_word = random.choice(list(german_words.keys()))
     translation = get_translation(random_word, german_words)

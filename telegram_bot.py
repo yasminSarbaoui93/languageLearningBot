@@ -43,7 +43,11 @@ def echo_all(message):
     print("Message received:" + message.text)
     bot.reply_to(message, message.text)
 
-
+@bot.message_handler(commands=['conversation'])
+def handle_conversation(message):
+    #here we will start the conversation by calling LLM
+    # bot.reply_to(message, "How are you?")
+    # bot.register_next_step_handler(message, handle_response)
 
 print("Bot is running")
 bot.polling()
