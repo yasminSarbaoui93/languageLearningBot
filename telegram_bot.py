@@ -37,17 +37,20 @@ def send_info(message):
 def handle_random_word(message):
     send_random_word(bot, message, german_words)
 
+@bot.message_handler(commands=['conversation'])
+def handle_conversation(message):
+    #here we will start the conversation by calling LLM
+    bot.reply_to(message, "How are you?")
+    #bot.register_next_step_handler(message, handle_response)
+
+
 # Message handler for all other messages    
 @bot.message_handler(func=lambda message: True)
 def echo_all(message):
     print("Message received:" + message.text)
     bot.reply_to(message, message.text)
 
-@bot.message_handler(commands=['conversation'])
-def handle_conversation(message):
-    #here we will start the conversation by calling LLM
-    # bot.reply_to(message, "How are you?")
-    # bot.register_next_step_handler(message, handle_response)
+
 
 print("Bot is running")
 bot.polling()
