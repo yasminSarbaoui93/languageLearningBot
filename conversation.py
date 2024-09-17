@@ -50,7 +50,7 @@ def llmresponse(messaggio, client, bot):
         userConversation.append({"role": "assistant", "content": response.text})
         print(userConversation) 
         bot.reply_to(messaggio, response.choices[0].message.content)
-        callOpenAI(messaggio, bot) 
+        #callOpenAI(messaggio, bot) 
 
 
 
