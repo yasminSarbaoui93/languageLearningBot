@@ -29,7 +29,7 @@ def callOpenAI(message, bot, client):
     else:
         bot.register_next_step_handler(message, lambda msg: llmresponse(msg, client, bot))
         userConversation.append({"role": "user", "content": message.text})
-        print("user conversation: ---------- \n"  + userConversation)
+        print("user conversation: ---------- \n"  + userConversation[0]["content"] + "\n" + userConversation[1]["content"] + "\n" + userConversation[1]["content"])
     return userConversation
 
 
