@@ -4,18 +4,19 @@
 #the function call open ai will become start ioen ai conversation, this will only initialize it
 #need a function to update the conversation thread with user response and system response
 
-# userConversation = [
-#             {"role": "assistant", "content": "test"},
-#             {"role": "user", "content": "test"},
-#         ]
+import openai
+import os
+from dotenv import load_dotenv
 
-#initialize empy conversation array
 
+load_dotenv()
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI()
 userConversation = []
-
+thread = client.beta.threads.create()
 
 def callOpenAI(message, bot, client):
-    
     #Check if userConversation array is empty or not
     #if empty, start the conversation with the assistant
     #if not empty, continue the conversation
@@ -23,7 +24,7 @@ def callOpenAI(message, bot, client):
         assistantMessage = bot.reply_to(message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪")
         userConversation.append({"role": "assistant", "content": assistantMessage.text})
         bot.register_next_step_handler(message, lambda msg: llmresponse(msg, client, bot))
-        
+
         print(userConversation)
     else:
         bot.register_next_step_handler(message, lambda msg: llmresponse(msg, client, bot))
@@ -37,29 +38,24 @@ def callOpenAI(message, bot, client):
 
 def llmresponse(messaggio, client, bot):
 
-    # if message.text == "end":
+    # if messaggio.text == "end":
     #     bot.reply_to(message, "Conversation ended")
     #     return
     # else:
 
 
     print("the messaggio is ----- " + messaggio.text)
+    userConversation.append({"role": "user", "content": messaggio.text})
+
     response = client.chat.completions.create(
         model="gpt-4o",
-        messages=[
-            {"role": "user", "content": messaggio.text},
-        ]
+        messages=userConversation
     )
-    userConversation.append({"role": "user", "content": messaggio.text}) 
+    print(userConversation) 
     bot.reply_to(messaggio, response.choices[0].message.content) 
 
 
 
-
-#save messages from user and system in a conversation array - this will be called messages
-#conversation = [
-#    {"role": "assistant", "content": "test"},
-#    {"role": "user", "content": "test"},
 
 
 

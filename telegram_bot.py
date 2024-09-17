@@ -1,10 +1,8 @@
 import os
 import random
-from litellm import OpenAI
 import telebot
 from dotenv import load_dotenv
 from randomTerms import send_random_word
-import openai
 from conversation import callOpenAI
 
 # Load the environment variables
@@ -45,19 +43,11 @@ def handle_random_word(message):
 
 
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
-client = OpenAI()
 
-#creating conversation array
-userConversation = [
-            {"role": "user", "content": "test"},
-        ]
 
 @bot.message_handler(commands=["conversation"])
 def conversation_handler(message):
     callOpenAI(message, bot, client)
-        #bot.reply_to(message, "Type 'end' to end the conversation")
-        #conversation_handler(message)
 
 
 
