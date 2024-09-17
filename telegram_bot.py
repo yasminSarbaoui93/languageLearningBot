@@ -47,7 +47,7 @@ def handle_random_word(message):
 
 @bot.message_handler(commands=["conversation"])
 def conversation_handler(message):
-    callOpenAI(message, bot, client)
+    callOpenAI(message, bot)
 
 
 

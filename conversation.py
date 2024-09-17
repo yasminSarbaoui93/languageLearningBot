@@ -17,7 +17,7 @@ client = OpenAI()
 userConversation = []
 # thread = client.beta.threads.create()
 
-def callOpenAI(message, bot, client):
+def callOpenAI(message, bot):
 
     if len(userConversation) == 0:
         assistantMessage = bot.reply_to(message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪")
