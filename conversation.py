@@ -1,9 +1,4 @@
 # This file contains the functions that are used to start a conversation with the user and get a response from OpenAI
-
-# start conversation thread
-# the function call open ai will become start ioen ai conversation, this will only initialize it
-# need a function to update the conversation thread with user response and system response
-
 import openai
 from openai import OpenAI
 import os
