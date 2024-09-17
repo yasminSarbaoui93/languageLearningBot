@@ -11,10 +11,10 @@ from dotenv import load_dotenv
 
 
 load_dotenv()
-
 openai.api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI()
 userConversation = []
+
 # thread = client.beta.threads.create()
 
 def callOpenAI(message, bot):
@@ -35,21 +35,22 @@ def callOpenAI(message, bot):
 
 def llmresponse(messaggio, client, bot):
 
-    # if messaggio.text == "end":
-    #     bot.reply_to(message, "Conversation ended")
-    #     return
-    # else:
+    if messaggio.text == "end":
+        bot.reply_to(messaggio, "Conversation ended")
+        return
+    else:
 
+        print("the messaggio is ----- " + messaggio.text)
+        userConversation.append({"role": "user", "content": messaggio.text})
 
-    print("the messaggio is ----- " + messaggio.text)
-    userConversation.append({"role": "user", "content": messaggio.text})
-
-    response = client.chat.completions.create(
-        model="gpt-4o",
-        messages=userConversation
-    )
-    print(userConversation) 
-    bot.reply_to(messaggio, response.choices[0].message.content) 
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=userConversation
+        )
+        userConversation.append({"role": "assistant", "content": response.text})
+        print(userConversation) 
+        bot.reply_to(messaggio, response.choices[0].message.content)
+        callOpenAI(messaggio, bot) 
 
 
 
