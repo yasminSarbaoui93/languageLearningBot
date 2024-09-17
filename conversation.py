@@ -4,28 +4,56 @@
 #the function call open ai will become start ioen ai conversation, this will only initialize it
 #need a function to update the conversation thread with user response and system response
 
-# userConversation = [
-#             {"role": "assistant", "content": "test"},
-#             {"role": "user", "content": "test"},
-#         ]
+import openai
+from openai import OpenAI
+import os
+from dotenv import load_dotenv
 
 
-def callOpenAI(message, bot, client):
-    msg = bot.reply_to(message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪")
-    bot.register_next_step_handler(message, llmresponse(msg, client, bot))
+load_dotenv()
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI()
+userConversation = []
+# thread = client.beta.threads.create()
+
+def callOpenAI(message, bot):
+
+    if len(userConversation) == 0:
+        assistantMessage = bot.reply_to(message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪")
+        userConversation.append({"role": "assistant", "content": assistantMessage.text})
+        bot.register_next_step_handler(message, lambda msg: llmresponse(msg, client, bot))
+        print(userConversation)
+    else:
+        bot.register_next_step_handler(message, lambda msg: llmresponse(msg, client, bot))
+        userConversation.append({"role": "user", "content": message.text})
+    return userConversation
+
+
+
 
 
 def llmresponse(messaggio, client, bot):
+
+    # if messaggio.text == "end":
+    #     bot.reply_to(message, "Conversation ended")
+    #     return
+    # else:
+
+
+    print("the messaggio is ----- " + messaggio.text)
+    userConversation.append({"role": "user", "content": messaggio.text})
+
     response = client.chat.completions.create(
         model="gpt-4o",
-        messages=[
-            {"role": "user", "content": messaggio.text},
-        ]
-        #stream=True
+        messages=userConversation
     )
-    print("content " + response.choices[0].message.content) 
+    print(userConversation) 
     bot.reply_to(messaggio, response.choices[0].message.content) 
-    #return response.choices[0].message.content
+
+
+
+
 
 
 # function to create a conversation thread
