@@ -1,4 +1,13 @@
-# All API requests should include your API key in an Authorization HTTP header as follows: Authorization: Bearer OPENAI_API_KEY
+#This file contains the functions that are used to start a conversation with the user and get a response from OpenAI
+
+#start conversation thread
+#the function call open ai will become start ioen ai conversation, this will only initialize it
+#need a function to update the conversation thread with user response and system response
+
+# userConversation = [
+#             {"role": "assistant", "content": "test"},
+#             {"role": "user", "content": "test"},
+#         ]
 
 
 def callOpenAI(message, bot, client):
@@ -12,13 +21,18 @@ def llmresponse(messaggio, client, bot):
         messages=[
             {"role": "user", "content": messaggio.text},
         ]
+        #stream=True
     )
     print("content " + response.choices[0].message.content) 
     bot.reply_to(messaggio, response.choices[0].message.content) 
     #return response.choices[0].message.content
 
 
+# function to create a conversation thread
 
+#funcition to check if the thread already exists or not
+
+#fix the handler function in order to not end the thread unless end button arrives
 
 
 
