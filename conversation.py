@@ -5,6 +5,7 @@
 #need a function to update the conversation thread with user response and system response
 
 import openai
+from openai import OpenAI
 import os
 from dotenv import load_dotenv
 
@@ -14,22 +15,18 @@ load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI()
 userConversation = []
-thread = client.beta.threads.create()
+# thread = client.beta.threads.create()
 
 def callOpenAI(message, bot, client):
-    #Check if userConversation array is empty or not
-    #if empty, start the conversation with the assistant
-    #if not empty, continue the conversation
+
     if len(userConversation) == 0:
         assistantMessage = bot.reply_to(message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪")
         userConversation.append({"role": "assistant", "content": assistantMessage.text})
         bot.register_next_step_handler(message, lambda msg: llmresponse(msg, client, bot))
-
         print(userConversation)
     else:
         bot.register_next_step_handler(message, lambda msg: llmresponse(msg, client, bot))
         userConversation.append({"role": "user", "content": message.text})
-        print("user conversation: ---------- \n"  + userConversation[0]["content"] + "\n" + userConversation[1]["content"] + "\n" + userConversation[1]["content"])
     return userConversation
 
 
