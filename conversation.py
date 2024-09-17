@@ -1,8 +1,8 @@
-#This file contains the functions that are used to start a conversation with the user and get a response from OpenAI
+# This file contains the functions that are used to start a conversation with the user and get a response from OpenAI
 
-#start conversation thread
-#the function call open ai will become start ioen ai conversation, this will only initialize it
-#need a function to update the conversation thread with user response and system response
+# start conversation thread
+# the function call open ai will become start ioen ai conversation, this will only initialize it
+# need a function to update the conversation thread with user response and system response
 
 import openai
 from openai import OpenAI
@@ -11,57 +11,57 @@ from dotenv import load_dotenv
 
 
 load_dotenv()
-
 openai.api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI()
 userConversation = []
+
 # thread = client.beta.threads.create()
+
 
 def callOpenAI(message, bot):
 
     if len(userConversation) == 0:
-        assistantMessage = bot.reply_to(message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪")
+        assistantMessage = bot.reply_to(
+            message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪"
+        )
         userConversation.append({"role": "assistant", "content": assistantMessage.text})
-        bot.register_next_step_handler(message, lambda msg: llmresponse(msg, client, bot))
+        bot.register_next_step_handler(
+            message, lambda msg: llmresponse(msg, client, bot)
+        )
+        print("First interaction - interaction number: " + str(len(userConversation)))
         print(userConversation)
+        print('------------------------------------------------------------------------'+ '\n')
     else:
-        bot.register_next_step_handler(message, lambda msg: llmresponse(msg, client, bot))
-        userConversation.append({"role": "user", "content": message.text})
+        bot.register_next_step_handler(
+            message, lambda msg: llmresponse(msg, client, bot)
+        )
+        # userConversation.append({"role": "user", "content": message.text})
     return userConversation
-
-
-
 
 
 def llmresponse(messaggio, client, bot):
 
-    # if messaggio.text == "end":
-    #     bot.reply_to(message, "Conversation ended")
-    #     return
-    # else:
+    if messaggio.text == "end":
+        bot.reply_to(messaggio, "Conversation ended")
+        return
+    else:
+        userConversation.append({"role": "user", "content": messaggio.text})
+        response = client.chat.completions.create(model="gpt-4o", messages=userConversation)
 
-
-    print("the messaggio is ----- " + messaggio.text)
-    userConversation.append({"role": "user", "content": messaggio.text})
-
-    response = client.chat.completions.create(
-        model="gpt-4o",
-        messages=userConversation
-    )
-    print(userConversation) 
-    bot.reply_to(messaggio, response.choices[0].message.content) 
-
-
-
+        userConversation.append(
+            {"role": "assistant", "content": response.choices[0].message.content}
+        )
+        print("Loop interaction - interaction number: " + str(len(userConversation)))
+        print(userConversation)
+        print('------------------------------------------------------------------------' + '\n')
+        bot.reply_to(messaggio, response.choices[0].message.content)
+        callOpenAI(messaggio, bot)
 
 
 
 # function to create a conversation thread
-
-#funcition to check if the thread already exists or not
-
-#fix the handler function in order to not end the thread unless end button arrives
-
+# funcition to check if the thread already exists or not
+# fix the handler function in order to not end the thread unless end button arrives
 
 
 # def callOpenAI(user_message)
@@ -75,9 +75,6 @@ def llmresponse(messaggio, client, bot):
 #         return response.choices[0].text.strip()
 #     except Exception as e:
 #         return f"An error occurred: {e}"
-    
-
-
 
 
 # stream = client.chat.completions.create(
