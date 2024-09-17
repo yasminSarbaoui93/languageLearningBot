@@ -42,31 +42,9 @@ def handle_random_word(message):
     send_random_word(bot, message, german_words)
 
 
-
-
-
 @bot.message_handler(commands=["conversation"])
 def conversation_handler(message):
     callOpenAI(message, bot)
-
-
-
-# def callOpenAI(user_message):
-#     msg = bot.reply_to(user_message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪")
-#     bot.register_next_step_handler(user_message, llmresponse)
-#     #bot.register_next_step_handler(user_message, lambda mmsg: llmresponse(mmsg))
-
-
-# def llmresponse(messaggio):
-#     response = client.chat.completions.create(
-#         model="gpt-4o",
-#         messages=[
-#             {"role": "user", "content": messaggio.text},
-#         ]
-#     )
-#     print("content " + response.choices[0].message.content) 
-#     bot.reply_to(messaggio, response.choices[0].message.content) 
-#     #return response.choices[0].message.content
 
 
 # Message handler for all other messages

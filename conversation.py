@@ -28,12 +28,14 @@ def callOpenAI(message, bot):
         bot.register_next_step_handler(
             message, lambda msg: llmresponse(msg, client, bot)
         )
+        print("First interaction - interaction number: " + str(len(userConversation)))
         print(userConversation)
+        print('------------------------------------------------------------------------'+ '\n')
     else:
         bot.register_next_step_handler(
             message, lambda msg: llmresponse(msg, client, bot)
         )
-        userConversation.append({"role": "user", "content": message.text})
+        # userConversation.append({"role": "user", "content": message.text})
     return userConversation
 
 
@@ -43,42 +45,22 @@ def llmresponse(messaggio, client, bot):
         bot.reply_to(messaggio, "Conversation ended")
         return
     else:
-
-        #         print("the messaggio is ----- " + messaggio.text)
         userConversation.append({"role": "user", "content": messaggio.text})
+        response = client.chat.completions.create(model="gpt-4o", messages=userConversation)
 
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "user", "content": messaggio.text},
-            ],
+        userConversation.append(
+            {"role": "assistant", "content": response.choices[0].message.content}
         )
-
-        userConversation.append({"role": "assistant", "content": response.text})
+        print("Loop interaction - interaction number: " + str(len(userConversation)))
         print(userConversation)
+        print('------------------------------------------------------------------------' + '\n')
         bot.reply_to(messaggio, response.choices[0].message.content)
+        callOpenAI(messaggio, bot)
 
-
-#         #callOpenAI(messaggio, bot)
-
-
-# def llmresponse(messaggio, client, bot):
-
-#     print("the messaggio is ----- " + messaggio.text)
-
-#     response = client.chat.completions.create(
-#         model="gpt-4o",
-#         messages=[
-#             {"role": "user", "content": messaggio.text},
-#         ]
-#     )
-#     bot.reply_to(messaggio, response.choices[0].message.content)
 
 
 # function to create a conversation thread
-
 # funcition to check if the thread already exists or not
-
 # fix the handler function in order to not end the thread unless end button arrives
 
 
