@@ -10,22 +10,36 @@
 #         ]
 
 
-def callOpenAI(message, bot, client):
-    msg = bot.reply_to(message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪")
-    bot.register_next_step_handler(message, llmresponse(msg, client, bot))
+def callOpenAI(message, bot, client, userConversation):
+    #msg = bot.reply_to(message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪")
+    bot.reply_to(message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪")
+    bot.register_next_step_handler(message, lambda msg: llmresponse(msg, client, bot))
+    #bot.register_next_step_handler(message, llmresponse(msg, client, bot))
+    #append the user message to the conversation array
+    #userConversation.append({"role": "assistant", "content": msg.text})
 
 
 def llmresponse(messaggio, client, bot):
+    print("the messaggio is ----- " + messaggio.text)
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[
             {"role": "user", "content": messaggio.text},
         ]
-        #stream=True
+       
     )
-    print("content " + response.choices[0].message.content) 
+    #print("content " + response.choices[0].message.content) 
     bot.reply_to(messaggio, response.choices[0].message.content) 
     #return response.choices[0].message.content
+
+
+
+
+#save messages from user and system in a conversation array - this will be called messages
+#conversation = [
+#    {"role": "assistant", "content": "test"},
+#    {"role": "user", "content": "test"},
+
 
 
 # function to create a conversation thread
