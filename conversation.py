@@ -44,29 +44,34 @@ def llmresponse(messaggio, client, bot):
         return
     else:
 
-        print("the messaggio is ----- " + messaggio.text)
+        #         print("the messaggio is ----- " + messaggio.text)
         userConversation.append({"role": "user", "content": messaggio.text})
 
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
-                {"role": "user", "content": messaggio.text}
-            ]
+                {"role": "user", "content": messaggio.text},
+            ],
         )
+
         userConversation.append({"role": "assistant", "content": response.text})
         print(userConversation)
         bot.reply_to(messaggio, response.choices[0].message.content)
-        #callOpenAI(messaggio, bot)
+
+
+#         #callOpenAI(messaggio, bot)
 
 
 # def llmresponse(messaggio, client, bot):
 
 #     print("the messaggio is ----- " + messaggio.text)
-#     userConversation.append({"role": "user", "content": messaggio.text})
 
-#     response = client.chat.completions.create(model="gpt-4o", messages=userConversation)
-#     userConversation.append({"role": "assistant", "content": response.text})
-#     print(userConversation)
+#     response = client.chat.completions.create(
+#         model="gpt-4o",
+#         messages=[
+#             {"role": "user", "content": messaggio.text},
+#         ]
+#     )
 #     bot.reply_to(messaggio, response.choices[0].message.content)
 
 
