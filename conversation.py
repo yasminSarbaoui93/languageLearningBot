@@ -21,11 +21,10 @@ def callOpenAI(message, bot, client):
     #if not empty, continue the conversation
     if len(userConversation) == 0:
         assistantMessage = bot.reply_to(message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪")
+        userConversation.append({"role": "assistant", "content": assistantMessage.text})
         bot.register_next_step_handler(message, lambda msg: llmresponse(msg, client, bot))
         
-        #append the user message to the conversation array
-        userConversation.append({"role": "assistant", "content": assistantMessage.text})
-        userConversation.append({"role": "user", "content": message.text})
+        print(userConversation)
     else:
         bot.register_next_step_handler(message, lambda msg: llmresponse(msg, client, bot))
         userConversation.append({"role": "user", "content": message.text})
@@ -50,11 +49,9 @@ def llmresponse(messaggio, client, bot):
         messages=[
             {"role": "user", "content": messaggio.text},
         ]
-       
     )
-    #print("content " + response.choices[0].message.content) 
+    userConversation.append({"role": "user", "content": messaggio.text}) 
     bot.reply_to(messaggio, response.choices[0].message.content) 
-    # return response.choices[0].message.content
 
 
 
