@@ -5,6 +5,7 @@ import telebot
 from dotenv import load_dotenv
 from randomTerms import send_random_word
 import openai
+from conversation import callOpenAI
 
 # Load the environment variables
 load_dotenv()
@@ -46,24 +47,28 @@ def handle_random_word(message):
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI()
-
 @bot.message_handler(commands=["conversation"])
-def callOpenAI(user_message):
-    bot.reply_to(user_message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪")
-    response = client.chat.completions.create(
+def conversation_handler(message):
+    callOpenAI(message, bot, client)
 
-        model="gpt-4o",
-        messages=[
-            {"role": "user", "content": user_message.text},
-        ]
-    )
-    llmresponse = response.choices[0].message.content
-    print(llmresponse)
 
-    #what happens here is that the LLM is receiving as a user message the /conversation command, so I need to add a waiting command in order to accept from the second message on
-    #this is also the reason why it goes to the polling then
-    bot.register_next_step_handler(user_message, response.choices[0].message.content)
-    #return response.choices[0].text.strip()
+
+# def callOpenAI(user_message):
+#     msg = bot.reply_to(user_message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪")
+#     bot.register_next_step_handler(user_message, llmresponse)
+#     #bot.register_next_step_handler(user_message, lambda mmsg: llmresponse(mmsg))
+
+
+# def llmresponse(messaggio):
+#     response = client.chat.completions.create(
+#         model="gpt-4o",
+#         messages=[
+#             {"role": "user", "content": messaggio.text},
+#         ]
+#     )
+#     print("content " + response.choices[0].message.content) 
+#     bot.reply_to(messaggio, response.choices[0].message.content) 
+#     #return response.choices[0].message.content
 
 
 # Message handler for all other messages
