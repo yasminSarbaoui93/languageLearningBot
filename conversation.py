@@ -9,17 +9,41 @@
 #             {"role": "user", "content": "test"},
 #         ]
 
+#initialize empy conversation array
 
-def callOpenAI(message, bot, client, userConversation):
-    #msg = bot.reply_to(message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪")
-    bot.reply_to(message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪")
-    bot.register_next_step_handler(message, lambda msg: llmresponse(msg, client, bot))
-    #bot.register_next_step_handler(message, llmresponse(msg, client, bot))
-    #append the user message to the conversation array
-    #userConversation.append({"role": "assistant", "content": msg.text})
+userConversation = []
+
+
+def callOpenAI(message, bot, client):
+    
+    #Check if userConversation array is empty or not
+    #if empty, start the conversation with the assistant
+    #if not empty, continue the conversation
+    if len(userConversation) == 0:
+        assistantMessage = bot.reply_to(message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪")
+        bot.register_next_step_handler(message, lambda msg: llmresponse(msg, client, bot))
+        
+        #append the user message to the conversation array
+        userConversation.append({"role": "assistant", "content": assistantMessage.text})
+        userConversation.append({"role": "user", "content": message.text})
+    else:
+        bot.register_next_step_handler(message, lambda msg: llmresponse(msg, client, bot))
+        userConversation.append({"role": "user", "content": message.text})
+        print("user conversation: ---------- \n"  + userConversation)
+    return userConversation
+
+
+
 
 
 def llmresponse(messaggio, client, bot):
+
+    # if message.text == "end":
+    #     bot.reply_to(message, "Conversation ended")
+    #     return
+    # else:
+
+
     print("the messaggio is ----- " + messaggio.text)
     response = client.chat.completions.create(
         model="gpt-4o",
@@ -30,7 +54,7 @@ def llmresponse(messaggio, client, bot):
     )
     #print("content " + response.choices[0].message.content) 
     bot.reply_to(messaggio, response.choices[0].message.content) 
-    #return response.choices[0].message.content
+    # return response.choices[0].message.content
 
 
 

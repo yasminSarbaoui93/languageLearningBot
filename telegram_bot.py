@@ -55,11 +55,7 @@ userConversation = [
 
 @bot.message_handler(commands=["conversation"])
 def conversation_handler(message):
-    if message.text == "end":
-        bot.reply_to(message, "Conversation ended")
-        return
-    else:
-        callOpenAI(message, bot, client, userConversation)
+    callOpenAI(message, bot, client)
         #bot.reply_to(message, "Type 'end' to end the conversation")
         #conversation_handler(message)
 
