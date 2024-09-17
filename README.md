@@ -25,6 +25,8 @@ Create a `.env` file with the following contents.
 
 ```
 API_TOKEN="<TELEGRAM API TOKEN>"
+OPENAI_API_KEY="<YOUR_API_KEY>"
+
 ```
 
 Start the bot with the following command.
