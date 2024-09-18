@@ -1,6 +1,7 @@
 #This file contains the functions that are used to get a random word from the dictionary and ask 
 #the user to translate it
 import random
+import os
 
 #Function that gets the translation of a word taken from the dictionary
 def get_translation(word, german_words):

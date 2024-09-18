@@ -1,20 +1,28 @@
-# This file contains the functions that are used to start a conversation with the user and get a response from OpenAI
+# This file contains the functions that are used to start a conversation with the user and get responses from OpenAI
 import openai
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-
+#import germanWords
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI()
-userConversation = []
 
-# thread = client.beta.threads.create()
+
+terms_data = os.path.join(os.getcwd(), "TermsList.csv")
+german_words = open(terms_data, "r", encoding="utf-8").read()
+
+
+
+userConversation = []
+userConversation.append({"role": "system", "content": "You are a bot that helps students to learn German. You need to have simple conversations, with short sentences, using only present tense. You will mainly use terms from the germanWords dictionary, as these are the words the student knows. \nHere is the list of the terms translated from Italian to German: " + content})
+print("System message: ")
+print(userConversation)
+print("------------------------------------------------------------" + '\n')
 
 
 def callOpenAI(message, bot):
-
     if len(userConversation) == 0:
         assistantMessage = bot.reply_to(
             message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪"
@@ -23,19 +31,17 @@ def callOpenAI(message, bot):
         bot.register_next_step_handler(
             message, lambda msg: llmresponse(msg, client, bot)
         )
-        print("First interaction - interaction number: " + str(len(userConversation)))
         print(userConversation)
-        print('------------------------------------------------------------------------'+ '\n')
+        print("------------------------------------------------------------" + '\n')
     else:
         bot.register_next_step_handler(
             message, lambda msg: llmresponse(msg, client, bot)
         )
-        # userConversation.append({"role": "user", "content": message.text})
     return userConversation
 
 
-def llmresponse(messaggio, client, bot):
 
+def llmresponse(messaggio, client, bot):
     if messaggio.text == "end":
         bot.reply_to(messaggio, "Conversation ended")
         return
@@ -46,10 +52,11 @@ def llmresponse(messaggio, client, bot):
         userConversation.append(
             {"role": "assistant", "content": response.choices[0].message.content}
         )
-        print("Loop interaction - interaction number: " + str(len(userConversation)))
-        print(userConversation)
-        print('------------------------------------------------------------------------' + '\n')
         bot.reply_to(messaggio, response.choices[0].message.content)
+        
+        print(userConversation)
+        print("------------------------------------------------------------" + '\n')
+        
         callOpenAI(messaggio, bot)
 
 
