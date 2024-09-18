@@ -12,58 +12,45 @@ client = OpenAI()
 terms_data = os.path.join(os.getcwd(), "TermsList.csv")
 german_words = open(terms_data, "r", encoding="utf-8").read()
 userConversation = []
-userConversation.append({"role": "system", "content": "You are a bot that helps students to learn German. You need to have simple conversations, with short sentences, using only present tense. You will mainly use terms from the germanWords dictionary, as these are the words the student knows. \nHere is the list of the terms translated from Italian to German: " + german_words})
+userConversation.append({"role": "system", "content": "You are a bot that helps students to learn German. You need to have simple conversations, with short sentences, using only present tense. You will mainly use terms from the dictionary in the TermsList file, as these are the words the student knows. \nHere is the list of the terms: " + german_words})
 
 
 def callOpenAI(message, bot):
-    if len(userConversation) == 1:
-        assistantMessage = bot.reply_to(
-            message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪" + '\n' + "Remember you can end the conversation anytime by typig `end`"
-        )
-        userConversation.append({"role": "assistant", "content": assistantMessage.text})
-        bot.register_next_step_handler(
-            message, lambda msg: llmresponse(msg, client, bot)
-        )
-    else:
-        bot.register_next_step_handler(
-            message, lambda msg: llmresponse(msg, client, bot)
-        )
-    return userConversation
+    #conversation starter from the bot. When calling this function, if there was no interaction yet then the bot will send a welcome message, otherwise it will respond to the user query
+    try:
+        if len(userConversation) == 1:
+            assistantMessage = bot.reply_to(
+                message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪" + '\n' + "Remember you can end the conversation anytime by typig `end`"
+            )
+            userConversation.append({"role": "assistant", "content": assistantMessage.text})
+            bot.register_next_step_handler(
+                message, lambda msg: llmresponse(msg, client, bot)
+            )
+        else:
+            bot.register_next_step_handler(
+                message, lambda msg: llmresponse(msg, client, bot)
+            )
+        return userConversation
+    except Exception as e:
+        return f"An error occurred: {e}"
 
 
-
-def llmresponse(messaggio, client, bot):
-    if messaggio.text == "end":
-        bot.reply_to(messaggio, "Conversation ended")
+def llmresponse(userMessage, client, bot):
+    if userMessage.text == "end":
+        bot.reply_to(userMessage, "Conversation ended")
         return
     else:
-        userConversation.append({"role": "user", "content": messaggio.text})
+        userConversation.append({"role": "user", "content": userMessage.text})
         response = client.chat.completions.create(model="gpt-4o", messages=userConversation)
 
         userConversation.append(
             {"role": "assistant", "content": response.choices[0].message.content}
         )
-        bot.reply_to(messaggio, response.choices[0].message.content)
-        callOpenAI(messaggio, bot)
+        bot.reply_to(userMessage, response.choices[0].message.content)
+        callOpenAI(userMessage, bot)
 
 
 
-# function to create a conversation thread
-# funcition to check if the thread already exists or not
-# fix the handler function in order to not end the thread unless end button arrives
-
-
-# def callOpenAI(user_message)
-#     try:
-#         response = openai.completions.create(
-#             model="gpt-4o"
-#             messages=[{"role": "user", "content": user_message}]
-#             temperature=0.7
-#             max_tokens=150
-#         )
-#         return response.choices[0].text.strip()
-#     except Exception as e:
-#         return f"An error occurred: {e}"
 
 
 # stream = client.chat.completions.create(
