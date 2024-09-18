@@ -3,30 +3,22 @@ import openai
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-import csv
+import pandas as pd
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI()
 
 
-terms_data = os.path.join(os.getcwd(), "TermsList.csv")
-german_words = open(terms_data, "r", encoding="utf-8").read() 
+#read csv file with panda
+terms_data = pd.read_csv('TermsList.csv',sep=';')
+terms_data = terms_data[['German']]
+german_words = ', '.join(terms_data['German'].tolist())
+print(terms_data)
 
-# german_words = []
-
-# with open(terms_data, "r", encoding="utf-8") as file:
-#     reader = csv.DictReader(file)
-#     for row in reader:
-#         german_words.append(row['German'])  # Assuming the column header is 'German'
-
-# # Example usage
-# print(german_words)
-
-
-
+#initialize conversation memory with system message
 userConversation = []
-userConversation.append({"role": "system", "content": "You are a bot that helps students to learn German. You need to have simple conversations, with short sentences, using only present tense. You will mainly use terms from the dictionary in the TermsList file, as these are the words the student knows. \nHere is the list of the terms where you will refer only to the German part: " + german_words})
+userConversation.append({"role": "system", "content": "You are a bot that helps students to learn German. You need to have simple conversations, with short sentences, using only present tense. You will mainly use terms from the dictionary in the TermsList file, as these are the words the student knows. \nHere is the list of the terms: " + german_words})
 
 
 def callOpenAI(message, bot):
