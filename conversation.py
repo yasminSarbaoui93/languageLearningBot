@@ -11,14 +11,8 @@ client = OpenAI()
 
 terms_data = os.path.join(os.getcwd(), "TermsList.csv")
 german_words = open(terms_data, "r", encoding="utf-8").read()
-
-
-
 userConversation = []
 userConversation.append({"role": "system", "content": "You are a bot that helps students to learn German. You need to have simple conversations, with short sentences, using only present tense. You will mainly use terms from the germanWords dictionary, as these are the words the student knows. \nHere is the list of the terms translated from Italian to German: " + german_words})
-print("System message: ")
-print(userConversation)
-print("------------------------------------------------------------" + '\n')
 
 
 def callOpenAI(message, bot):
@@ -30,8 +24,6 @@ def callOpenAI(message, bot):
         bot.register_next_step_handler(
             message, lambda msg: llmresponse(msg, client, bot)
         )
-        print(userConversation)
-        print("------------------------------------------------------------" + '\n')
     else:
         bot.register_next_step_handler(
             message, lambda msg: llmresponse(msg, client, bot)
@@ -52,10 +44,6 @@ def llmresponse(messaggio, client, bot):
             {"role": "assistant", "content": response.choices[0].message.content}
         )
         bot.reply_to(messaggio, response.choices[0].message.content)
-        
-        print(userConversation)
-        print("------------------------------------------------------------" + '\n')
-        
         callOpenAI(messaggio, bot)
 
 
