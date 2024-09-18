@@ -16,9 +16,9 @@ userConversation.append({"role": "system", "content": "You are a bot that helps 
 
 
 def callOpenAI(message, bot):
-    if len(userConversation) == 0:
+    if len(userConversation) == 1:
         assistantMessage = bot.reply_to(
-            message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪"
+            message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪" + '\n' + "Remember you can end the conversation anytime by typig `end`"
         )
         userConversation.append({"role": "assistant", "content": assistantMessage.text})
         bot.register_next_step_handler(
