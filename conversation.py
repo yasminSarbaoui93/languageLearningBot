@@ -14,17 +14,16 @@ client = OpenAI()
 terms_data = pd.read_csv('TermsList.csv',sep=';')
 terms_data = terms_data[['German']]
 german_words = ', '.join(terms_data['German'].tolist())
-print(terms_data)
 
 #initialize conversation memory with system message
 userConversation = []
-userConversation.append({"role": "system", "content": "You are a bot that helps students to learn German. You need to have simple conversations, with short sentences, using only present tense. You will mainly use terms from the dictionary in the TermsList file, as these are the words the student knows. \nHere is the list of the terms: " + german_words})
 
-
-def callOpenAI(message, bot):
+def callOpenAI(message, bot, newConversation):
     #conversation starter from the bot. When calling this function, if there was no interaction yet then the bot will send a welcome message, otherwise it will respond to the user query
     try:
-        if len(userConversation) == 1:
+        if newConversation:
+            userConversation = []
+            userConversation.append({"role": "system", "content": "You are a bot that helps students to learn German. You need to have simple conversations, with short sentences, using only present tense. You will mainly use terms from the dictionary in the TermsList file, as these are the words the student knows. \nHere is the list of the terms: " + german_words})
             assistantMessage = bot.reply_to(
                 message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪" + '\n' + "Remember you can end the conversation anytime by typig `end`"
             )
@@ -53,7 +52,7 @@ def llmresponse(userMessage, client, bot):
             {"role": "assistant", "content": response.choices[0].message.content}
         )
         bot.reply_to(userMessage, response.choices[0].message.content)
-        callOpenAI(userMessage, bot)
+        callOpenAI(userMessage, bot, False)
 
 
 
