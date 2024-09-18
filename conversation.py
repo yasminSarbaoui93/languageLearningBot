@@ -3,7 +3,6 @@ import openai
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-#import germanWords
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -16,7 +15,7 @@ german_words = open(terms_data, "r", encoding="utf-8").read()
 
 
 userConversation = []
-userConversation.append({"role": "system", "content": "You are a bot that helps students to learn German. You need to have simple conversations, with short sentences, using only present tense. You will mainly use terms from the germanWords dictionary, as these are the words the student knows. \nHere is the list of the terms translated from Italian to German: " + content})
+userConversation.append({"role": "system", "content": "You are a bot that helps students to learn German. You need to have simple conversations, with short sentences, using only present tense. You will mainly use terms from the germanWords dictionary, as these are the words the student knows. \nHere is the list of the terms translated from Italian to German: " + german_words})
 print("System message: ")
 print(userConversation)
 print("------------------------------------------------------------" + '\n')
