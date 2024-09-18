@@ -1,0 +1,69 @@
+# This file contains the functions that are used to start a conversation with the user and get responses from OpenAI
+import openai
+from openai import OpenAI
+import os
+from dotenv import load_dotenv
+import pandas as pd
+
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI()
+
+
+#read csv file with panda
+terms_data = pd.read_csv('TermsList.csv',sep=';')
+terms_data = terms_data[['German']]
+german_words = ', '.join(terms_data['German'].tolist())
+print(terms_data)
+
+#initialize conversation memory with system message
+userConversation = []
+userConversation.append({"role": "system", "content": "You are a bot that helps students to learn German. You need to have simple conversations, with short sentences, using only present tense. You will mainly use terms from the dictionary in the TermsList file, as these are the words the student knows. \nHere is the list of the terms: " + german_words})
+
+
+def callOpenAI(message, bot):
+    #conversation starter from the bot. When calling this function, if there was no interaction yet then the bot will send a welcome message, otherwise it will respond to the user query
+    try:
+        if len(userConversation) == 1:
+            assistantMessage = bot.reply_to(
+                message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪" + '\n' + "Remember you can end the conversation anytime by typig `end`"
+            )
+            userConversation.append({"role": "assistant", "content": assistantMessage.text})
+            bot.register_next_step_handler(
+                message, lambda msg: llmresponse(msg, client, bot)
+            )
+        else:
+            bot.register_next_step_handler(
+                message, lambda msg: llmresponse(msg, client, bot)
+            )
+        return userConversation
+    except Exception as e:
+        return f"An error occurred: {e}"
+
+
+def llmresponse(userMessage, client, bot):
+    if userMessage.text == "end":
+        bot.reply_to(userMessage, "Conversation ended")
+        return
+    else:
+        userConversation.append({"role": "user", "content": userMessage.text})
+        response = client.chat.completions.create(model="gpt-4o", messages=userConversation)
+
+        userConversation.append(
+            {"role": "assistant", "content": response.choices[0].message.content}
+        )
+        bot.reply_to(userMessage, response.choices[0].message.content)
+        callOpenAI(userMessage, bot)
+
+
+
+
+
+# stream = client.chat.completions.create(
+#     model="gpt-4o-mini",
+#     messages=[{"role": "user", "content": "Say this is a test"}],
+#     stream=True,
+# )
+# for chunk in stream:
+#     if chunk.choices[0].delta.content is not None:
+#         print(chunk.choices[0].delta.content, end="")
