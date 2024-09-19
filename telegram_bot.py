@@ -1,5 +1,4 @@
 import os
-import random
 import telebot
 from dotenv import load_dotenv
 from randomTerms import send_random_word
@@ -9,15 +8,6 @@ from conversation import callOpenAI
 load_dotenv()
 API_TOKEN = os.getenv("API_TOKEN")
 bot = telebot.TeleBot(API_TOKEN)
-
-# Dictionary of german words with their english translations
-german_words = {
-    "hello": "hallo",
-    "goodbye": "auf wiedersehen",
-    "thanks": "danke",
-    "please": "bitte",
-}
-
 
 # Create a message handler for the /start and /help commands
 @bot.message_handler(commands=["start", "help"])
@@ -39,7 +29,7 @@ def send_info(message):
 
 @bot.message_handler(commands=["random"])
 def handle_random_word(message):
-    send_random_word(bot, message, german_words)
+    send_random_word(bot, message)
 
 
 @bot.message_handler(commands=["conversation"])
