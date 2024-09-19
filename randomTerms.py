@@ -7,10 +7,9 @@ import pandas as pd
 #read csv file with panda
 german_words = pd.read_csv('TermsList.csv',sep=';')
 test_random_word = random.choice(german_words['Italian'])
-print("random word from csv " + test_random_word)
 
 
-#Function that gets the translation of a word taken from the dictionary
+#Function that gets the translation of a word taken from the csv dictionary
 def get_translation(word):
     index = german_words[german_words['Italian'] == word].index[0]
     translation = german_words.at[index, 'German']
@@ -19,7 +18,6 @@ def get_translation(word):
 
 #Function that checks if the user response is correct or not
 def check_response(message, translation, bot):
-    print("User response: " + message.text)
     if message.text.lower() == translation.lower():
         bot.reply_to(message, "Correct! ✅")
     else:
