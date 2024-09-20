@@ -13,13 +13,14 @@ def add_word(message, bot):
 
 
 def register_word(user_message, bot):
+    global english_term, german_term
     # check if english term is empty
     if english_term == "":
         english_term = user_message.text
         bot.reply_to(
             user_message, f"Type the German translation of the word {english_term}"
         )
-        bot.register_next_step_handler(user_message, lambda msg: register_word(msg))
+        bot.register_next_step_handler(user_message, lambda msg: register_word(msg, bot))
     else:
         german_term = user_message.text
         new_word = pd.DataFrame({"English": [english_term], "German": [german_term]})
