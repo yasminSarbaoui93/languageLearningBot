@@ -3,6 +3,7 @@ import telebot
 from dotenv import load_dotenv
 from randomTerms import send_random_word
 from conversation import callOpenAI
+from addWord import add_word
 
 # Load the environment variables
 load_dotenv()
@@ -36,6 +37,9 @@ def handle_random_word(message):
 def conversation_handler(message):
     callOpenAI(message, bot, True)
 
+@bot.message_handler(commands=["add"])
+def conversation_handler(message):
+    add_word(message, bot) #call function to add a new word to the dictionary
 
 # Message handler for all other messages
 @bot.message_handler(func=lambda message: True)
