@@ -1,3 +1,4 @@
+#This file contains the function to add a new word to the dictionary
 import pandas as pd
 import os
 
@@ -5,16 +6,15 @@ import os
 english_term = ""
 german_term = ""
 
-
+# Function to add a new word to the dictionary, to be called from telegram_bot.py
 def add_word(message, bot):
     bot.reply_to(message, f"Type the english word you want to add to the dictionary")
     bot_reply = bot.register_next_step_handler(message, lambda msg: register_word(msg, bot))
-    #bot.reply_to(bot_reply, "The word has been added to the dictionary")
 
-
+# Function to register the word to be added to the dictionary
 def register_word(user_message, bot):
     global english_term, german_term
-    # check if english term is empty
+    # check if english term is empty, meaning it was not added by the user yet
     if english_term == "":
         english_term = user_message.text
         bot.reply_to(
@@ -27,12 +27,14 @@ def register_word(user_message, bot):
         english_term = ""
         german_term = ""
         save_word(new_word)
+        bot.reply_to(user_message, "The word has been added to the dictionary")
 
-
+# Function to save the new word to the csv file
 def save_word(new_word):
     if os.path.exists("TermsList.csv"):
         terms_data = pd.read_csv("TermsList.csv", sep=";")
-        terms_data = terms_data.append(new_word, ignore_index=True)
+        terms_data = pd.concat([terms_data, new_word], ignore_index=True)
+
     else:
         terms_data = new_word
     terms_data.to_csv("TermsList.csv", sep=";", index=False)
