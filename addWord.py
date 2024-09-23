@@ -23,7 +23,7 @@ def ask_for_original_word(user_message, bot):
 
 
 def ask_for_translated_word(user_message, bot):
-    global german_term
+    global english_term, german_term
     german_term = user_message.text
     new_word = pd.DataFrame({"English": [english_term], "German": [german_term]})
     english_term = ""
