@@ -15,6 +15,7 @@ terms_data = pd.read_csv('TermsList.csv',sep=';')
 terms_data = terms_data[['German']]
 german_words = ','.join(terms_data['German'].tolist())
 
+
 #initialize conversation memory with system message
 userConversation = []
 
