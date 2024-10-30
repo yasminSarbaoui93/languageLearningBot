@@ -26,6 +26,10 @@ Create a `.env` file with the following contents.
 ```
 API_TOKEN="<TELEGRAM API TOKEN>"
 OPENAI_API_KEY="<YOUR_API_KEY>"
+AZURE_RESOURCE_GROUP="<>"
+COSMOS_ACCOUNT_NAME="<>"
+COSMOS_ACCOUNT_URI="<>"
+COSMOS_ACCOUNT_KEY="<>"
 
 ```
 
