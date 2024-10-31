@@ -1,7 +1,7 @@
 #This file contains the function to add a new word to the dictionary
 import pandas as pd
 import os
-from wordRepository import save_word_to_cosmos
+from wordRepository import save_word
 
 source_word = ""
 translation = ""
@@ -31,20 +31,7 @@ def _ask_for_translated_word(user_message, bot):
 def _save_word(user_message, bot):    
     global source_word, translation
     translation = user_message.text
-    new_word = pd.DataFrame({"English": [source_word], "German": [translation]})
-    _save_word_to_csv_file(new_word)
-    save_word_to_cosmos(source_word, translation)
+    saveword_result = save_word(source_word, translation)
     source_word = ""
     translation = ""
-    bot.reply_to(user_message, "The word has been added to the dictionary")
-
-# Function to save a word to a local csv file
-csv_name = "TermsList.csv"
-def _save_word_to_csv_file(new_word):
-    if os.path.exists(csv_name):
-        terms_data = pd.read_csv(csv_name, sep=";")
-        terms_data = pd.concat([terms_data, new_word], ignore_index=True)
-    else:
-        terms_data = new_word
-    terms_data.to_csv(csv_name, sep=";", index=False)
-
+    bot.reply_to(user_message, saveword_result)
