@@ -1,7 +1,7 @@
 #This file contains the function to add a new word to the dictionary
 import pandas as pd
 import os
-
+from wordRepository import save_word_to_cosmos
 english_term = ""
 german_term = ""
 
@@ -35,6 +35,7 @@ def _save_word(user_message, bot):
     # Define and save full new word
     new_word = pd.DataFrame({"English": [english_term], "German": [german_term]})
     _save_word_to_csv_file(new_word)
+    save_word_to_cosmos(english_term, german_term)
 
     # Reset global variables
     english_term = ""
