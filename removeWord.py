@@ -1,7 +1,7 @@
 #This file contains the function to add a new word to the dictionary
 import pandas as pd
 import os
-from wordRepository import delete_word
+from vocabulary import delete_word
 
 nativelanguage_word = ""
 translation = ""

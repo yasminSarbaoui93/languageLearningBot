@@ -3,7 +3,7 @@ import telebot
 from dotenv import load_dotenv
 from randomTerms import send_random_word
 from conversation import callOpenAI
-from addWord import add_word
+from addNewWord import add_word_to_dictionary
 from removeWord import remove_word
 
 # Load the environment variables
@@ -40,7 +40,7 @@ def conversation_handler(message):
 
 @bot.message_handler(commands=["add"])
 def add_handler(message):
-    add_word(message, bot) #call function to add a new word to the dictionary
+    add_new_word(message, bot) #call function to add a new word to the dictionary
 
 @bot.message_handler(commands=["remove"])
 def remove_handler(message):
