@@ -16,9 +16,9 @@ words_container = dictionary_database.get_container_client("words")
 #Function to import the list of words in a local array from cosmosDB given the user ID
 def get_all_words(user_id):
     items = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = @user_id", parameters=[dict(name="@user_id", value=user_id)]))
-    words = [item['translation']['text'] for item in items]
-    print(words)
-    return
+    words = [[item['text'], item['translation']['text']] for item in items]
+    #words = [item['translation']['text'] for item in items]
+    return words
 
 
 #Function to save a new word to the CosmosDB - id generated locally with uuid and user_id hardcoded for now 
