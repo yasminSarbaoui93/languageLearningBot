@@ -40,7 +40,7 @@ def _delete_word(user_message, bot):
 
 csv_name = "TermsList.csv"
 #Function that, given new_word as input, it searches the pair in the csv file and deletes it
-def _delete_word_from_csv_file(word_to_delete):
+def _delete_word_from_csv_file(nativelanguage_word, translation):
     word_to_delete = pd.DataFrame({"English": [nativelanguage_word], "German": [translation]})
     if os.path.exists(csv_name):
         terms_data = pd.read_csv(csv_name, sep=";")
@@ -48,7 +48,7 @@ def _delete_word_from_csv_file(word_to_delete):
         terms_data = terms_data.drop(index)
         terms_data.to_csv(csv_name, sep=";", index=False)
     else:
-        print("The word is not in the dictionary")
+        print("The word is not in the csv file dictionary")
 
 
 

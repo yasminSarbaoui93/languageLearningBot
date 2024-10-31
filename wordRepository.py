@@ -43,11 +43,14 @@ def save_word_to_cosmos(text, translation):
 #Function to delete a given word (native language and its translation) from cosmosDB
 def delete_word_from_cosmos(text, translation):
     try:
-        items = list(words_container.query_items(query="SELECT * FROM c WHERE c.text = @text AND c.translation.text = @translation", parameters=[dict(name="@text", value=text), dict(name="@translation", value=translation)]))
+        items = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = '553fcaa0-2530-472c-9126-ffec24c62a6c' c.text = @text AND c.translation.text = @translation", parameters=[dict(name="@text", value=text), dict(name="@translation", value=translation)]))
+        
+
+
         for item in items:
             words_container.delete_item(item, partition_key=item['user_id']) 
         print("The word has been deleted from cosmosDB")
     except Exception as e:
-        print("Word not found in the dictionary " + e)
+        print("Word not found in the CosmosDB dictionary " + str(e))
 
 
