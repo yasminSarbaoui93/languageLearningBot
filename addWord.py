@@ -2,23 +2,6 @@
 import pandas as pd
 import os
 from wordRepository import save_word_to_cosmos
-from dotenv import load_dotenv
-from azure.ai.textanalytics import TextAnalyticsClient
-from azure.core.credentials import AzureKeyCredential
-
-load_dotenv()
-language_key = os.getenv("LANGUAGESTUDIO_KEY")
-language_endpoint = os.getenv("LANGUAGESTUDIO_ENDPOINT")
-
-# Function to authenticate the client to use the Azure Text Analytics API
-def authenticate_client():
-    ta_credential = AzureKeyCredential(language_key)
-    text_analytics_client = TextAnalyticsClient(
-            endpoint=language_endpoint, 
-            credential=ta_credential)
-    return text_analytics_client
-
-client = authenticate_client()
 
 source_word = ""
 translation = ""
@@ -44,35 +27,24 @@ def _ask_for_translated_word(user_message, bot):
     )
     bot.register_next_step_handler(user_message, lambda user_message: _save_word(user_message, bot))    
 
-# Function to save the new word to the csv
-def _save_word(user_message, bot):
-    
-    # Save translation
+# Function to save the new word locally from the user text, save the pair with word and translation both to the csv and to cosmosDB
+def _save_word(user_message, bot):    
     global source_word, translation
     translation = user_message.text
-
-    # Detect language of the source word and translation
-    source_language_code = client.detect_language([source_word])[0].primary_language.iso6391_name
-    translation_language_code = client.detect_language([translation])[0].primary_language.iso6391_name
-  
-    # Define and save full new word on csv file
     new_word = pd.DataFrame({"English": [source_word], "German": [translation]})
     _save_word_to_csv_file(new_word)
-
-    # Save the new word to the CosmosDB
-    save_word_to_cosmos(source_language_code, source_word, translation_language_code, translation)
-
-    # Reset global variables
+    save_word_to_cosmos(source_word, translation)
     source_word = ""
     translation = ""
-        
     bot.reply_to(user_message, "The word has been added to the dictionary")
 
-# Function to save the new word to the csv file
+# Function to save a word to a local csv file
+csv_name = "TermsList.csv"
 def _save_word_to_csv_file(new_word):
-    if os.path.exists("TermsList.csv"):
-        terms_data = pd.read_csv("TermsList.csv", sep=";")
+    if os.path.exists(csv_name):
+        terms_data = pd.read_csv(csv_name, sep=";")
         terms_data = pd.concat([terms_data, new_word], ignore_index=True)
     else:
         terms_data = new_word
-    terms_data.to_csv("TermsList.csv", sep=";", index=False)
+    terms_data.to_csv(csv_name, sep=";", index=False)
+
