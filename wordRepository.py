@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from azure.cosmos import exceptions, CosmosClient, PartitionKey
 from azure.identity import DefaultAzureCredential
+import uuid
 
 #Creating connection to CosmosDB
 load_dotenv()
@@ -24,4 +25,5 @@ def get_words():
 def save_word_to_cosmos(english_term, german_term):
     database = cosmos_client.get_database_client("dictionary")
     container = database.get_container_client("words")
-    container.create_item(body={"user_id":"553fcaa0-2530-472c-9126-ffec24c62a6c", "language_code": "en", "text":english_term, "translation": {"text": german_term, "language_code": "de"}})
+    unique_id = str(uuid.uuid4())
+    container.create_item(body={"id":unique_id, "user_id":"553fcaa0-2530-472c-9126-ffec24c62a6c", "language_code": "en", "text":english_term, "translation": {"text": german_term, "language_code": "de"}})

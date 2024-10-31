@@ -8,6 +8,7 @@ appnope==0.1.4
 APScheduler==3.10.4
 asttokens==2.4.1
 attrs==23.2.0
+az==0.1.0.dev1
 azure==4.0.0
 azure-ai-documentintelligence==1.0.0b1
 azure-ai-formrecognizer==3.3.2
