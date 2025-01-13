@@ -11,20 +11,17 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI()
 
 
-#read csv file with panda
-# terms_data = pd.read_csv('TermsList.csv',sep=';')
-# terms_data = terms_data[['German']]
-# german_words = ','.join(terms_data['German'].tolist())
-
 #extract all words of a dictionary - for now i have it locally
 user_id = os.getenv("USER_ID")
 all_words = get_all_words(user_id)
 
+
 #create an array that gets only the german terms from all_words, meaning that are in [0][1], [1][1], [2][1] etc
 german_words = []
 for i in range(len(all_words)):
-    german_words.append(all_words[i][1])
+    german_words.append(str(all_words[i][1]))
     
+german_words = str(german_words)
 
 #initialize conversation locl memory with system message
 userConversation = []
