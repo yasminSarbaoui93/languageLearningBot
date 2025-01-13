@@ -1,5 +1,4 @@
 #This file contains the function to add a new word to the dictionary
-import pandas as pd
 import os
 from vocabulary import delete_word
 

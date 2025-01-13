@@ -3,7 +3,6 @@ import openai
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-import pandas as pd
 from vocabulary import get_all_words
 
 load_dotenv()
@@ -20,7 +19,7 @@ all_words = get_all_words(user_id)
 german_words = []
 for i in range(len(all_words)):
     german_words.append(str(all_words[i][1]))
-    
+        
 german_words = str(german_words)
 
 #initialize conversation locl memory with system message
