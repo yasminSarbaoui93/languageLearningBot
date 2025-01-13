@@ -25,7 +25,7 @@ def _ask_for_translated_word(user_message, bot):
     bot.reply_to(
         user_message, f"Type the German translation of the word {nativelanguage_word}"
     )
-    bot.register_next_step_handler(user_message, lambda user_message: _save_word(user_message, bot))    
+    bot.register_next_step_handler(user_message, lambda user_message: _save_word_to_db(user_message, bot))    
 
 # Function to save the new word locally from the user text, save the pair with word and translation both to the csv and to cosmosDB
 def _save_word_to_db(user_message, bot):    

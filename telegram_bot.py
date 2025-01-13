@@ -40,7 +40,7 @@ def conversation_handler(message):
 
 @bot.message_handler(commands=["add"])
 def add_handler(message):
-    add_new_word(message, bot) #call function to add a new word to the dictionary
+    add_word_to_dictionary(message, bot) #call function to add a new word to the dictionary
 
 @bot.message_handler(commands=["remove"])
 def remove_handler(message):
