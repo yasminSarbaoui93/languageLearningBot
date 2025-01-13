@@ -4,6 +4,7 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 import pandas as pd
+from vocabulary import get_all_words
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -11,12 +12,21 @@ client = OpenAI()
 
 
 #read csv file with panda
-terms_data = pd.read_csv('TermsList.csv',sep=';')
-terms_data = terms_data[['German']]
-german_words = ','.join(terms_data['German'].tolist())
+# terms_data = pd.read_csv('TermsList.csv',sep=';')
+# terms_data = terms_data[['German']]
+# german_words = ','.join(terms_data['German'].tolist())
 
+#extract all words of a dictionary - for now i have it locally
+user_id = os.getenv("USER_ID")
+all_words = get_all_words(user_id)
 
-#initialize conversation memory with system message
+#create an array that gets only the german terms from all_words, meaning that are in [0][1], [1][1], [2][1] etc
+german_words = []
+for i in range(len(all_words)):
+    german_words.append(all_words[i][1])
+    
+
+#initialize conversation locl memory with system message
 userConversation = []
 
 def callOpenAI(message, bot, newConversation):
@@ -56,14 +66,3 @@ def llmresponse(userMessage, client, bot):
         callOpenAI(userMessage, bot, False)
 
 
-
-
-
-# stream = client.chat.completions.create(
-#     model="gpt-4o-mini",
-#     messages=[{"role": "user", "content": "Say this is a test"}],
-#     stream=True,
-# )
-# for chunk in stream:
-#     if chunk.choices[0].delta.content is not None:
-#         print(chunk.choices[0].delta.content, end="")
