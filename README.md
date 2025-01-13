@@ -1,6 +1,6 @@
 # German Vocabulary Bot
 
-A Telegram bot that helps you learn German vocabulary.
+A Telegram bot that helps you learn German.
 
 ## Getting Started
 
