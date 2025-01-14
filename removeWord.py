@@ -4,7 +4,7 @@ This file contains the function to add a new word to the dictionary
 import os
 from vocabulary import delete_word
 
-nativelanguage_word = ""
+word_to_be_deleted = ""
 translation = ""
 
 
@@ -16,35 +16,19 @@ def remove_word(user_message, bot):
     user_message: the message object from the user
     bot: the bot object to send messages to the user
     """
-    _ask_for_nativelanguage_word(user_message, bot)    
+    _ask_for_word_to_be_deleted(user_message, bot)    
 
 
-def _ask_for_nativelanguage_word(user_message, bot):
+def _ask_for_word_to_be_deleted(user_message, bot):
     """
-    Function to register the word to be added to the dictionary
+    Function to register the word to be deleted from the dictionary
 
     args:
     user_message: the message object from the user
     bot: the bot object to send messages to the user
     """
-    bot.reply_to(user_message, f"Type the english word you want to remove to the dictionary")
-    bot.register_next_step_handler(user_message, lambda user_message: _ask_for_translation(user_message, bot))
-
-
-def _ask_for_translation(user_message, bot):
-    """
-    Function to register the translation of the word to be added to the dictionary
-
-    args:
-    user_message: the message object from the user
-    bot: the bot object to send messages to the user
-    """
-    global nativelanguage_word
-    nativelanguage_word = user_message.text
-    bot.reply_to(
-        user_message, f"Type the German translation of the word {nativelanguage_word}"
-    )
-    bot.register_next_step_handler(user_message, lambda user_message: _delete_word(user_message, bot))    
+    bot.reply_to(user_message, f"Type the word you want to remove to the dictionary")
+    bot.register_next_step_handler(user_message, lambda user_message: _delete_word(user_message, bot))
 
 
 def _delete_word(user_message, bot):    
@@ -55,13 +39,13 @@ def _delete_word(user_message, bot):
     user_message: the message object from the user
     bot: the bot object to send messages to the user
     """
-    global nativelanguage_word, translation
-    translation = user_message.text
-    delete_result = delete_word(nativelanguage_word, translation)
+    global word_to_be_deleted 
+    word_to_be_deleted = user_message.text
+    delete_result = delete_word(word_to_be_deleted)
     if delete_result:
-        bot_response = f"The word <b>'{nativelanguage_word}'</b> and its translation <b>'{translation}'</b> have been removed from the dictionary"
+        bot_response = f"The word <b>{word_to_be_deleted}</b> has been removed from the dictionary"
     else:
-        bot_response = f"The word <b>'{nativelanguage_word}'</b> and its translation <b>'{translation}'</b> could not be found in the dictionary"
-    nativelanguage_word = ""
+        bot_response = f"The word <b>{word_to_be_deleted}</b> and its translation could not be found in the dictionary"
+    bot.send_message(user_message.chat.id, bot_response, parse_mode='HTML')
+    word_to_be_deleted = ""
     translation = ""
-    bot.reply_to(user_message, bot_response)

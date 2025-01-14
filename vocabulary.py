@@ -76,23 +76,24 @@ def save_word(text, translation):
         return True
 
 
-def delete_word(text, translation):
+def delete_word(text):
     """
     Function to delete a word from the dictionary in CosmosDB given the word and its translation
 
     args:
-    text: the word in the native language
-    translation: the translation of the word
+    text: the word to be deleted from the dictionary, in the native language or the learning language
 
     returns:
     binary: a boolean indicating if the word has been deleted or not
     """
     text = text.lower()
-    translation = translation.lower()
+    language_code = detect_language_code(text)
     try:
-        items = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = '553fcaa0-2530-472c-9126-ffec24c62a6c' AND c.text = @text AND c.translation.text = @translation", parameters=[dict(name="@text", value=text), dict(name="@translation", value=translation)]))
+        if language_code == "en":
+            items = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = '553fcaa0-2530-472c-9126-ffec24c62a6c' AND c.text = @text", parameters=[dict(name="@text", value=text)]))
+        else:
+            items = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = '553fcaa0-2530-472c-9126-ffec24c62a6c' AND c.translation.text = @text", parameters=[dict(name="@text", value=text)]))
         if len(items) != 0:
-            print(items)
             for item in items:
                 words_container.delete_item(item, partition_key=item['user_id']) 
             return True
