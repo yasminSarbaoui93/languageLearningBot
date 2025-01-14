@@ -11,6 +11,7 @@ load_dotenv()
 API_TOKEN = os.getenv("API_TOKEN")
 bot = telebot.TeleBot(API_TOKEN)
 
+
 # Create a message handler for the /start and /help commands
 @bot.message_handler(commands=["start", "help"])
 def send_welcome(message):
@@ -40,14 +41,14 @@ def conversation_handler(message):
 
 @bot.message_handler(commands=["add"])
 def add_handler(message):
-    add_word_to_dictionary(message, bot) #call function to add a new word to the dictionary
+    add_word_to_dictionary(message, bot)
 
 @bot.message_handler(commands=["remove"])
 def remove_handler(message):
-    remove_word(message, bot) #call function to add a new word to the dictionary
+    remove_word(message, bot)
 
 
-# Message handler for all other messages
+# Message handler for all other messages - by now it only repeats the message that the user sent
 @bot.message_handler(func=lambda message: True)
 def echo_all(message):
     print("Message received:" + message.text)

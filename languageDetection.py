@@ -8,16 +8,30 @@ language_key = os.getenv("LANGUAGESTUDIO_KEY")
 language_endpoint = os.getenv("LANGUAGESTUDIO_ENDPOINT")
 
 
-# Function to authenticate the client to use the Azure Text Analytics API
 def authenticate_client():
+    """
+    Function to authenticate the client to use the Azure Text Analytics API
+    
+    returns:
+    text_analytics_client: the client object to use the API
+    """
     ta_credential = AzureKeyCredential(language_key)
     text_analytics_client = TextAnalyticsClient(
             endpoint=language_endpoint, 
             credential=ta_credential)
     return text_analytics_client
 
+
 client = authenticate_client()
-#Function to detect language code of source text and translation
 def detect_language_code(text):
+    """
+    Function to detect the language code of a given text
+    
+    args:
+    text: the text to detect the language code for
+    
+    returns:
+    language_code: the language code of the text (e.g. en, de, fr)
+    """
     language_code = client.detect_language([text])[0].primary_language.iso6391_name
     return language_code

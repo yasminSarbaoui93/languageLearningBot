@@ -1,4 +1,6 @@
-# This file contains the functions that are used to start a conversation with the user and get responses from OpenAI
+"""
+This file contains the functions that are used to start a conversation with the user and get responses from OpenAI
+"""
 import openai
 from openai import OpenAI
 import os
@@ -8,25 +10,33 @@ from vocabulary import get_all_words
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI()
-
-
-#extract all words of a dictionary - for now i have it locally
 user_id = os.getenv("USER_ID")
+
 all_words = get_all_words(user_id)
+"""extract all words of a dictionary - for now i have it locally"""
 
 
-#create an array that gets only the german terms from all_words, meaning that are in [0][1], [1][1], [2][1] etc
 german_words = []
+"""array of all german words in the dictionary"""
 for i in range(len(all_words)):
     german_words.append(str(all_words[i][1]))
-        
 german_words = str(german_words)
 
-#initialize conversation locl memory with system message
-userConversation = []
 
+userConversation = []
+"""array to store the conversation history locally, initialized with a system message"""
 def callOpenAI(message, bot, newConversation):
-    #conversation starter from the bot. When calling this function, if there was no interaction yet then the bot will send a welcome message, otherwise it will respond to the user query
+    """
+    Function to start a conversation with the user and get responses from OpenAI
+    
+    args:
+    message: the message object from the user
+    bot: the bot object to send the message
+    newConversation: a boolean indicating if this is a new conversation or not
+    
+    returns:
+    userConversation: the conversation history
+    """
     try:
         if newConversation:
             userConversation = []
@@ -48,6 +58,14 @@ def callOpenAI(message, bot, newConversation):
 
 
 def llmresponse(userMessage, client, bot):
+    """
+    Function to get responses from OpenAI and continue the conversation
+
+    args:
+    userMessage: the message object from the user
+    client: the OpenAI client object
+    bot: the bot object to send the message
+    """
     if userMessage.text == "end":
         bot.reply_to(userMessage, "Conversation ended")
         return
@@ -60,5 +78,3 @@ def llmresponse(userMessage, client, bot):
         )
         bot.reply_to(userMessage, response.choices[0].message.content)
         callOpenAI(userMessage, bot, False)
-
-
