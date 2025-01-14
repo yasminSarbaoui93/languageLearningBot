@@ -3,7 +3,7 @@
 import random
 import os
 import pandas as pd
-from vocabulary import get_all_words
+from src.repository.vocabulary import get_all_words
 from dotenv import load_dotenv
 
 

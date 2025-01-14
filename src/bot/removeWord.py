@@ -2,7 +2,7 @@
 This file contains the function to add a new word to the dictionary
 """
 import os
-from vocabulary import delete_word
+from src.repository.vocabulary import delete_word
 
 word_to_be_deleted = ""
 translation = ""

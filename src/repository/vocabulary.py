@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from azure.cosmos import exceptions, CosmosClient, PartitionKey
 from azure.identity import DefaultAzureCredential
 import uuid
-from languageDetection import detect_language_code
+from src.services.languageDetection import detect_language_code
 
 """
 Creating connection to CosmosDB

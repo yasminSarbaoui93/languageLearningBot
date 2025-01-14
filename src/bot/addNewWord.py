@@ -1,6 +1,6 @@
 """This file contains the function to add a new word to the dictionary"""
 import os
-from vocabulary import save_word
+from src.repository.vocabulary import save_word
 
 nativelanguage_word = ""
 translation = ""

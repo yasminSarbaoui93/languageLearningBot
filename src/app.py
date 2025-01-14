@@ -1,10 +1,10 @@
 import os
 import telebot
 from dotenv import load_dotenv
-from randomTerms import send_random_word
-from conversation import callOpenAI
-from addNewWord import add_word_to_dictionary
-from removeWord import remove_word
+from src.bot.randomTerms import send_random_word
+from src.bot.conversation import callOpenAI
+from src.bot.addNewWord import add_word_to_dictionary
+from src.bot.removeWord import remove_word
 
 # Load the environment variables
 load_dotenv()

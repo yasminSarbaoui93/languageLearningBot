@@ -38,7 +38,7 @@ LANGUAGESTUDIO_ENDPOINT="<YOUR_AZURE_LANGUAGESTUDIO_ENDPOINT>"
 Start the bot with the following command.
 
 ```bash
-python telegram_bot.py
+python src/app.py
 ```
 
 

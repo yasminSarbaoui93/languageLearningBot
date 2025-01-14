@@ -5,7 +5,7 @@ import openai
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-from vocabulary import get_all_words
+from src.repository.vocabulary import get_all_words
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
