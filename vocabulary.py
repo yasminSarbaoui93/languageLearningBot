@@ -88,11 +88,14 @@ def delete_word(text, translation):
     binary: a boolean indicating if the word has been deleted or not
     """
     text = text.lower()
+    language_code = detect_language_code
     translation = translation.lower()
     try:
-        items = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = '553fcaa0-2530-472c-9126-ffec24c62a6c' AND c.text = @text AND c.translation.text = @translation", parameters=[dict(name="@text", value=text), dict(name="@translation", value=translation)]))
+        if language_code is "en":
+            items = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = '553fcaa0-2530-472c-9126-ffec24c62a6c' AND c.text = @text", parameters=[dict(name="@text", value=text)]))
+        else:
+            items = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = '553fcaa0-2530-472c-9126-ffec24c62a6c' AND c.translation.text = @translation", parameters=[dict(name="@translation", value=translation)]))
         if len(items) != 0:
-            print(items)
             for item in items:
                 words_container.delete_item(item, partition_key=item['user_id']) 
             return True
