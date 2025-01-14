@@ -44,7 +44,7 @@ def save_word(text, translation):
     translation: the translation of the word
 
     returns:
-    message: a message indicating if the word has been added or if it already exists
+    boolean: a boolean indicating if the word has been saved or not
     """
     text = text.lower()
     translation = translation.lower()
@@ -61,7 +61,7 @@ def save_word(text, translation):
 
     duplicate_words = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = '553fcaa0-2530-472c-9126-ffec24c62a6c' AND c.text = @text AND c.translation.text = @translation", parameters=[dict(name="@text", value=text), dict(name="@translation", value=translation)]))
     if len(duplicate_words) != 0:
-        return "The word already exists"
+        return False
     else:
         words_container.create_item(body={
             "id":unique_id, 
@@ -73,7 +73,7 @@ def save_word(text, translation):
                 "language_code": translation_language_code
             }       
         })
-        return "The word has been added to the dictionary"
+        return True
 
 
 def delete_word(text, translation):
