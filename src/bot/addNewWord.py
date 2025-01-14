@@ -1,4 +1,4 @@
-"""This file contains the function to add a new word to the dictionary"""
+"""This file contains the function to be called by the bot to add a new word to the dictionary"""
 import os
 from src.repository.vocabulary import save_word
 
@@ -55,11 +55,16 @@ def _save_word_to_db(user_message, bot):
     """
     global nativelanguage_word, translation
     translation = user_message.text
-    saveword_result = save_word(nativelanguage_word, translation)
-    if saveword_result:
+    
+    try:
+        save_word(nativelanguage_word, translation)
         bot_response = f"The word <b>{nativelanguage_word}</b> has been added to the dictionary"
-    else:
-        bot_response = f"The word <b>{nativelanguage_word}</b> already exists in the dictionary"
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        bot_response = f"Sorry, an error occurred while trying to save the word."
+
+
+
     nativelanguage_word = ""
     translation = ""
     bot.send_message(user_message.chat.id, bot_response, parse_mode='HTML')

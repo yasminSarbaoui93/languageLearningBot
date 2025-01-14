@@ -1,5 +1,5 @@
 """
-This file contains the function to add a new word to the dictionary
+This file contains the functions to be called by the bot to add a new word to the dictionary
 """
 import os
 from src.repository.vocabulary import delete_word
@@ -41,11 +41,17 @@ def _delete_word(user_message, bot):
     """
     global word_to_be_deleted 
     word_to_be_deleted = user_message.text
-    delete_result = delete_word(word_to_be_deleted)
-    if delete_result:
-        bot_response = f"The word <b>{word_to_be_deleted}</b> has been removed from the dictionary"
-    else:
-        bot_response = f"The word <b>{word_to_be_deleted}</b> and its translation could not be found in the dictionary"
+    bot_response = ""
+
+    try:
+        words_deleted = delete_word(word_to_be_deleted)
+        if words_deleted:
+            bot_response = f"The word <b>{word_to_be_deleted}</b> has been removed from the dictionary"
+        else:
+            bot_response = f"The word <b>{word_to_be_deleted}</b> could not be found in the dictionary"
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        bot_response = f"An error occurred while trying to remove the word <b>{word_to_be_deleted}</b> from the dictionary."
+    
     bot.send_message(user_message.chat.id, bot_response, parse_mode='HTML')
     word_to_be_deleted = ""
-    translation = ""

@@ -30,19 +30,25 @@ def send_info(message):
     bot.reply_to(message, "Goodbye! Have a nice day")
 
 
+# Create a message handler for the /random command
 @bot.message_handler(commands=["random"])
 def handle_random_word(message):
     send_random_word(bot, message)
 
 
+# Create a message handler for the /conversation command
 @bot.message_handler(commands=["conversation"])
 def conversation_handler(message):
-    callOpenAI(message, bot, True)
+    callOpenAI(message, bot, True)    
 
+
+# Create a message handler for the /add command
 @bot.message_handler(commands=["add"])
 def add_handler(message):
     add_word_to_dictionary(message, bot)
 
+
+# Create a message handler for the /remove command
 @bot.message_handler(commands=["remove"])
 def remove_handler(message):
     remove_word(message, bot)

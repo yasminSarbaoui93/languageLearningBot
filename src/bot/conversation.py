@@ -1,5 +1,5 @@
 """
-This file contains the functions that are used to start a conversation with the user and get responses from OpenAI
+This file contains the functions to be called by the bot that are used to start a conversation with the user and get responses from OpenAI
 """
 import openai
 from openai import OpenAI
@@ -25,6 +25,8 @@ german_words = str(german_words)
 
 userConversation = []
 """array to store the conversation history locally, initialized with a system message"""
+
+
 def callOpenAI(message, bot, newConversation):
     """
     Function to start a conversation with the user and get responses from OpenAI
@@ -42,7 +44,7 @@ def callOpenAI(message, bot, newConversation):
             userConversation = []
             userConversation.append({"role": "system", "content": "You are a bot that helps students to learn German. You need to have simple conversations, with short sentences, using only present tense. You will mainly use terms from the dictionary in the TermsList file, as these are the words the student knows. \nHere is the list of the terms: " + german_words})
             assistantMessage = bot.reply_to(
-                message, f"Hallo, ich kann dir hilfe zu Deutch spreche! 🇩🇪" + '\n' + "Remember you can end the conversation anytime by typig `end`"
+                message, f"Hallo, ich kann dir helfen zu Deutsch zu sprechen! 🇩🇪" + '\n' + "Remember you can end the conversation anytime by typig `end`"
             )
             userConversation.append({"role": "assistant", "content": assistantMessage.text})
             bot.register_next_step_handler(
@@ -54,7 +56,8 @@ def callOpenAI(message, bot, newConversation):
             )
         return userConversation
     except Exception as e:
-        return f"An error occurred: {e}"
+        print(f"An error occurred: {e}")
+        return []
 
 
 def llmresponse(userMessage, client, bot):

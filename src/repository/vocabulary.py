@@ -29,6 +29,7 @@ def get_all_words(user_id):
     returns:
     words: a list of all the words in the dictionary for the user
     """
+
     items = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = @user_id", parameters=[dict(name="@user_id", value=user_id)]))
     words = [[item['text'], item['translation']['text']] for item in items]
     #words = [item['translation']['text'] for item in items]
@@ -52,6 +53,7 @@ def save_word(text, translation):
     language_code = detect_language_code(text)
     translation_language_code = detect_language_code(translation)
     
+    # Check, if the generated unique id is already in use
     words_with_same_id = list(words_container.query_items(query="SELECT * FROM c WHERE c.id = @id", parameters=[dict(name="@id", value=unique_id)], enable_cross_partition_query=True))
     num_words_with_same_id = len(words_with_same_id)
     while num_words_with_same_id != 0:
@@ -59,21 +61,22 @@ def save_word(text, translation):
         words_with_same_id = list(words_container.query_items(query="SELECT * FROM c WHERE c.id = @id", parameters=[dict(name="@id", value=unique_id)], enable_cross_partition_query=True))
         num_words_with_same_id = len(words_with_same_id)
 
+    # Check, if the word is already in the dictionary
     duplicate_words = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = '553fcaa0-2530-472c-9126-ffec24c62a6c' AND c.text = @text AND c.translation.text = @translation", parameters=[dict(name="@text", value=text), dict(name="@translation", value=translation)]))
     if len(duplicate_words) != 0:
-        return False
-    else:
-        words_container.create_item(body={
-            "id":unique_id, 
-            "user_id":"553fcaa0-2530-472c-9126-ffec24c62a6c", 
-            "language_code": language_code, 
-            "text":text, 
-            "translation": {
-                "text": translation, 
-                "language_code": translation_language_code
-            }       
-        })
-        return True
+        raise Exception("Duplicate word found")
+    
+    # Save the word to the database
+    words_container.create_item(body={
+        "id":unique_id, 
+        "user_id":"553fcaa0-2530-472c-9126-ffec24c62a6c", 
+        "language_code": language_code, 
+        "text":text, 
+        "translation": {
+            "text": translation, 
+            "language_code": translation_language_code
+        }       
+    })
 
 
 def delete_word(text):
@@ -84,21 +87,21 @@ def delete_word(text):
     text: the word to be deleted from the dictionary, in the native language or the learning language
 
     returns:
-    binary: a boolean indicating if the word has been deleted or not
+    binary: a boolean indicating if at least one word has been deleted or not
     """
     text = text.lower()
     language_code = detect_language_code(text)
-    try:
-        if language_code == "en":
-            items = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = '553fcaa0-2530-472c-9126-ffec24c62a6c' AND c.text = @text", parameters=[dict(name="@text", value=text)]))
-        else:
-            items = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = '553fcaa0-2530-472c-9126-ffec24c62a6c' AND c.translation.text = @text", parameters=[dict(name="@text", value=text)]))
-        if len(items) != 0:
-            for item in items:
-                words_container.delete_item(item, partition_key=item['user_id']) 
-            return True
-        else:
-            return False
-    except Exception as e:
-        print("An error occurred " + str(e))
+
+    if language_code == "en":
+        items = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = '553fcaa0-2530-472c-9126-ffec24c62a6c' AND c.text = @text", parameters=[dict(name="@text", value=text)]))
+    else:
+        items = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = '553fcaa0-2530-472c-9126-ffec24c62a6c' AND c.translation.text = @text", parameters=[dict(name="@text", value=text)]))
+    
+    # Check if there are any words to delete
+    if len(items) != 0:
+        for item in items:
+            words_container.delete_item(item, partition_key=item['user_id']) 
+        return True
+    else:
+        # No words to delete found.
         return False

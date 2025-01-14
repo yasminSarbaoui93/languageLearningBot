@@ -1,4 +1,4 @@
-"""This file contains the functions that are used to get a random word from the dictionary and ask the user to translate it
+"""This file contains the functions to be called by the bot that are used to get a random word from the dictionary and ask the user to translate it
 """
 import random
 import os
