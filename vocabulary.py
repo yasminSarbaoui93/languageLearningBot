@@ -8,7 +8,6 @@ from azure.identity import DefaultAzureCredential
 import uuid
 from languageDetection import detect_language_code
 
-
 """
 Creating connection to CosmosDB
 """
@@ -57,6 +56,8 @@ def save_word(text, translation):
     num_words_with_same_id = len(words_with_same_id)
     while num_words_with_same_id != 0:
         unique_id = str(uuid.uuid4())
+        words_with_same_id = list(words_container.query_items(query="SELECT * FROM c WHERE c.id = @id", parameters=[dict(name="@id", value=unique_id)], enable_cross_partition_query=True))
+        num_words_with_same_id = len(words_with_same_id)
 
     duplicate_words = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = '553fcaa0-2530-472c-9126-ffec24c62a6c' AND c.text = @text AND c.translation.text = @translation", parameters=[dict(name="@text", value=text), dict(name="@translation", value=translation)]))
     if len(duplicate_words) != 0:
