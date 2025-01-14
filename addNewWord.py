@@ -57,9 +57,9 @@ def _save_word_to_db(user_message, bot):
     translation = user_message.text
     saveword_result = save_word(nativelanguage_word, translation)
     if saveword_result:
-        bot_response = f"The word {nativelanguage_word} has been added to the dictionary"
+        bot_response = f"The word <b>{nativelanguage_word}</b> has been added to the dictionary"
     else:
-        bot_response = f"The word {nativelanguage_word} already exists in the dictionary"
+        bot_response = f"The word <b>{nativelanguage_word}</b> already exists in the dictionary"
     nativelanguage_word = ""
     translation = ""
     bot.reply_to(user_message, bot_response)
