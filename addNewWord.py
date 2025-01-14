@@ -62,4 +62,4 @@ def _save_word_to_db(user_message, bot):
         bot_response = f"The word <b>{nativelanguage_word}</b> already exists in the dictionary"
     nativelanguage_word = ""
     translation = ""
-    bot.reply_to(user_message, bot_response)
+    bot.send_message(user_message.chat.id, bot_response, parse_mode='HTML')
