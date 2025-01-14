@@ -26,11 +26,25 @@ Create a `.env` file with the following contents.
 ```
 API_TOKEN="<TELEGRAM API TOKEN>"
 OPENAI_API_KEY="<YOUR_API_KEY>"
+AZURE_RESOURCE_GROUP="<YOUR_AZURE_RESOURCE_GROUP_NAME>"
+COSMOS_ACCOUNT_NAME="<YOUR_COSMOSDB_ACCOUNT_NAME>"
+COSMOS_ACCOUNT_URI="<YOUR_COSMOSDB_ACCOUNT_URI>"
+
+LANGUAGESTUDIO_KEY="<YOUR_AZURE_LANGUAGESTUDIO_KEY>"
+LANGUAGESTUDIO_ENDPOINT="<YOUR_AZURE_LANGUAGESTUDIO_ENDPOINT>"
 
 ```
 
 Start the bot with the following command.
 
 ```bash
-python telegram_bot.py
+python src/app.py
 ```
+
+
+# APPENDIX
+
+**Create Language Studio Resource**
+Link to create the resource: https://portal.azure.com/#create/Microsoft.CognitiveServicesTextAnalytics
+
+**Create CosmosDB**

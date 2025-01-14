@@ -1,5 +1,3 @@
-# pip3 freeze > requirements.txt
-
 adal==1.2.7
 aiohttp==3.9.5
 aiosignal==1.3.1
@@ -10,18 +8,22 @@ appnope==0.1.4
 APScheduler==3.10.4
 asttokens==2.4.1
 attrs==23.2.0
+az==0.1.0.dev1
 azure==4.0.0
 azure-ai-documentintelligence==1.0.0b1
 azure-ai-formrecognizer==3.3.2
+azure-ai-textanalytics==5.2.0
 azure-applicationinsights==0.1.1
 azure-batch==4.1.3
 azure-common==1.1.28
-azure-core==1.30.0
+azure-core==1.31.0
+azure-cosmos==4.7.0
 azure-cosmosdb-nspkg==2.0.2
 azure-cosmosdb-table==1.0.6
 azure-datalake-store==0.0.53
 azure-eventgrid==1.3.0
 azure-graphrbac==0.40.0
+azure-identity==1.19.0
 azure-keyvault==1.1.0
 azure-loganalytics==0.1.1
 azure-mgmt==4.0.0
@@ -150,7 +152,8 @@ MarkupSafe==2.1.5
 matplotlib==3.9.0
 matplotlib-inline==0.1.7
 mdurl==0.1.2
-msal==1.26.0
+msal==1.31.0
+msal-extensions==1.2.0
 msrest==0.7.1
 msrestazure==0.6.4
 multidict==6.0.5
@@ -166,6 +169,7 @@ parso==0.8.4
 pexpect==4.9.0
 pillow==10.3.0
 platformdirs==4.2.2
+portalocker==2.10.1
 prompt_toolkit==3.0.47
 protobuf==5.27.2
 psutil==6.0.0
