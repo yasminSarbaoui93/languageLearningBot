@@ -22,7 +22,26 @@ words_container = dictionary_database.get_container_client("words")
 user_container = dictionary_database.get_container_client("users")
 
 
-def get_all_words(first_name: str, last_name: str, telegram_id: str, username: str):
+def get_or_create_user_id(telegram_id: str, username: str | None) -> str:
+    """
+    Function to lookup a user in the database by its telegram_id or creates a new user if it does not exist yet
+
+    args:
+    username: If we need to create a new user, this is the username of the user.
+    """
+    query = "SELECT * FROM c WHERE c.telegram_id = @telegram_id AND c.partition_key = 'shared'"
+    items = list(user_container.query_items(query, parameters=[dict(name="@telegram_id", value=telegram_id)]))
+
+    # check, if there is a user with the given telegram_id
+    # if no user with the given telegram_id is found, create a new user and return it
+    # otherwise return the existing user
+
+    
+
+
+
+
+def get_all_words(user_id: str):
     """
     Function to get all the words from the dictionary of a user, given its unique telegram_id
 
@@ -75,7 +94,7 @@ def _create_user_in_cosmos(first_name: str, last_name: str, telegram_id: str, us
     return user_id
 
 
-def save_word(text: str, translation: str, first_name: str, last_name: str, telegram_id: str, username: str):
+def save_word(user_id: str, text: str, translation: str):
     """
     Function to save a new word to the dictionary in CosmosDB
 
@@ -116,7 +135,7 @@ def save_word(text: str, translation: str, first_name: str, last_name: str, tele
     })
 
 
-def delete_word(text):
+def delete_word(user_id: str, text: str):
     """
     Function to delete a word from the dictionary in CosmosDB given the word and its translation
 
