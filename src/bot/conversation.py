@@ -28,7 +28,7 @@ userConversation = []
 
 def initializeConversation(message, bot, newConversation):
     global german_words, userConversation
-    all_words = get_all_words(message.from_user.first_name, message.from_user.last_name, message.from_user.id, message.from_user.username)
+    all_words = get_all_words(message.from_user.first_name, message.from_user.last_name, str(message.from_user.id), message.from_user.username)
     german_words = []
     for i in range(len(all_words)):
         german_words.append(str(all_words[i][1]))

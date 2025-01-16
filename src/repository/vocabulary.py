@@ -14,13 +14,16 @@ Creating connection to CosmosDB
 load_dotenv()
 credential = DefaultAzureCredential()
 cosmos_endpoint = os.getenv("COSMOS_ACCOUNT_URI")
+if not cosmos_endpoint:
+    raise ValueError("COSMOS_ACCOUNT_URI is not set")
+
 cosmos_client = CosmosClient(cosmos_endpoint, credential=credential)
 dictionary_database = cosmos_client.get_database_client("dictionary")
 words_container = dictionary_database.get_container_client("words")
 user_container = dictionary_database.get_container_client("users")
 
 
-def get_all_words(first_name, last_name, telegram_id, username):
+def get_all_words(first_name: str, last_name: str, telegram_id: str, username: str):
     """
     Function to get all the words from the dictionary for a given user
 
@@ -30,15 +33,14 @@ def get_all_words(first_name, last_name, telegram_id, username):
     returns:
     words: a list of all the words in the dictionary for the user
     """
-    telegram_id = str(telegram_id)
     user_id = _extract_user_id_from_cosmos(first_name, last_name, telegram_id, username)
-    
     items = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = @user_id", parameters=[dict(name="@user_id", value=user_id)]))
     words = [[item['text'], item['translation']['text']] for item in items]
     #words = [item['translation']['text'] for item in items]
     return words
 
-def _extract_user_id_from_cosmos(first_name, last_name, telegram_id, username):
+
+def _extract_user_id_from_cosmos(first_name: str, last_name: str, telegram_id: str, username: str):
     """
     search query to check if there is a user with the given user_id on cosmos db
 
@@ -73,7 +75,7 @@ def _extract_user_id_from_cosmos(first_name, last_name, telegram_id, username):
     
 
 
-def save_word(text, translation):
+def save_word(text: str, translation: str):
     """
     Function to save a new word to the dictionary in CosmosDB
 

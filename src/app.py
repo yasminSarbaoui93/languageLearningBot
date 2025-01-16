@@ -4,7 +4,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 import telebot
 from dotenv import load_dotenv
 from src.bot.randomTerms import send_random_word
-#from src.bot.conversation import callOpenAI
 from src.bot.conversation import initializeConversation
 from src.bot.addNewWord import add_word_to_dictionary
 from src.bot.removeWord import remove_word
@@ -12,6 +11,8 @@ from src.bot.removeWord import remove_word
 # Load the environment variables
 load_dotenv()
 API_TOKEN = os.getenv("API_TOKEN")
+if not API_TOKEN:
+    raise ValueError("API_TOKEN is not set")
 bot = telebot.TeleBot(API_TOKEN)
 
 
@@ -29,7 +30,7 @@ def send_info(message):
 
 # Create a message handler for the /bye command
 @bot.message_handler(commands=["bye"])
-def send_info(message):
+def send_goodbye(message):
     bot.reply_to(message, "Goodbye! Have a nice day")
 
 
