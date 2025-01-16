@@ -73,8 +73,6 @@ def _extract_user_id_from_cosmos(first_name: str, last_name: str, telegram_id: s
     return user_id
     
     
-
-
 def save_word(text: str, translation: str):
     """
     Function to save a new word to the dictionary in CosmosDB
