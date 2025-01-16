@@ -72,6 +72,7 @@ def _save_word_to_db(user_message, bot):
     print(f"username= {user_message.from_user.username}")
     print(f"name= {user_message.from_user.first_name}")
     print(f"last name= {user_message.from_user.last_name}")
+    print(f"number= {user_message.from_user.phone_number}")
 
 
     bot.send_message(user_message.chat.id, bot_response, parse_mode='HTML')

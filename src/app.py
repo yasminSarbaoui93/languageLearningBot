@@ -4,7 +4,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 import telebot
 from dotenv import load_dotenv
 from src.bot.randomTerms import send_random_word
-from src.bot.conversation import callOpenAI
+#from src.bot.conversation import callOpenAI
+from src.bot.conversation import initializeConversation
 from src.bot.addNewWord import add_word_to_dictionary
 from src.bot.removeWord import remove_word
 
@@ -41,7 +42,7 @@ def handle_random_word(message):
 # Create a message handler for the /conversation command
 @bot.message_handler(commands=["conversation"])
 def conversation_handler(message):
-    callOpenAI(message, bot, True)    
+    initializeConversation(message, bot, True)    
 
 
 # Create a message handler for the /add command

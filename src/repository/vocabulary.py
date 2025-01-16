@@ -17,9 +17,10 @@ cosmos_endpoint = os.getenv("COSMOS_ACCOUNT_URI")
 cosmos_client = CosmosClient(cosmos_endpoint, credential=credential)
 dictionary_database = cosmos_client.get_database_client("dictionary")
 words_container = dictionary_database.get_container_client("words")
+user_container = dictionary_database.get_container_client("users")
 
 
-def get_all_words(user_id):
+def get_all_words(first_name, last_name, telegram_id, username):
     """
     Function to get all the words from the dictionary for a given user
 
@@ -29,11 +30,45 @@ def get_all_words(user_id):
     returns:
     words: a list of all the words in the dictionary for the user
     """
-
+    user_id = _extract_user_id_from_cosmos(first_name, last_name, telegram_id, username)
+    
     items = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = @user_id", parameters=[dict(name="@user_id", value=user_id)]))
     words = [[item['text'], item['translation']['text']] for item in items]
     #words = [item['translation']['text'] for item in items]
     return words
+
+def _extract_user_id_from_cosmos(first_name, last_name, telegram_id, username):
+    """
+    search query to check if there is a user with the given user_id on cosmos db
+
+    args:
+    first_name: the first name of the user
+    last_name: the last name of the user
+    telegram_id: the telegram id of the user
+    username: the username of the user
+
+    returns:
+    user_id: the id of the user object in cosmos db
+    """
+    query = "SELECT * FROM c WHERE c.telegram_id = @telegram_id"
+    parameters = [dict(name="@telegram_id", value=telegram_id)]
+    items = list(user_container.query_items(query, parameters))
+    
+    if len(items) == 0:
+        #create a new item in cosmos DB in the list users with partition_key = "shared", name = message.from_user.first_name, surname = message.from_user.last_name, user_id = message.from_user.id, email = ""
+        user_container.create_item(body={
+            "name": first_name,
+            "surname": last_name,
+            "telegram_id": telegram_id,
+            "email": "",
+            "username": username,
+            "partition_key": "shared"
+        })
+        items = list(user_container.query_items(query, parameters))
+    user_id = items[0]['id']
+    return user_id
+    
+    
 
 
 def save_word(text, translation):

@@ -12,22 +12,34 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI()
 user_id = os.getenv("USER_ID")
 
-all_words = get_all_words(user_id)
-"""extract all words of a dictionary - for now i have it locally"""
+# all_words = get_all_words(user_id)
+# """extract all words of a dictionary - for now i have it locally"""
 
 
-german_words = []
-"""array of all german words in the dictionary"""
-for i in range(len(all_words)):
-    german_words.append(str(all_words[i][1]))
-german_words = str(german_words)
+# german_words = []
+# """array of all german words in the dictionary"""
+# for i in range(len(all_words)):
+#     german_words.append(str(all_words[i][1]))
+# german_words = str(german_words)
 
 
 userConversation = []
 """array to store the conversation history locally, initialized with a system message"""
 
+def initializeConversation(message, bot, newConversation):
+    global german_words, userConversation
+    all_words = get_all_words(message.from_user.first_name, message.from_user.last_name, message.from_user.id, message.from_user.username)
 
-def callOpenAI(message, bot, newConversation):
+    german_words = []
+    for i in range(len(all_words)):
+        german_words.append(str(all_words[i][1]))
+    german_words = str(german_words)
+    print(f"Dictionary from user {message.from_user.first_name} and dictionary containing {len(german_words)} words")
+    _callOpenAI(message, bot, newConversation)
+
+
+
+def _callOpenAI(message, bot, newConversation):
     """
     Function to start a conversation with the user and get responses from OpenAI
     
@@ -48,11 +60,11 @@ def callOpenAI(message, bot, newConversation):
             )
             userConversation.append({"role": "assistant", "content": assistantMessage.text})
             bot.register_next_step_handler(
-                message, lambda msg: llmresponse(msg, client, bot)
+                message, lambda msg: _llmresponse(msg, client, bot)
             )
         else:
             bot.register_next_step_handler(
-                message, lambda msg: llmresponse(msg, client, bot)
+                message, lambda msg: _llmresponse(msg, client, bot)
             )
         return userConversation
     except Exception as e:
@@ -60,7 +72,7 @@ def callOpenAI(message, bot, newConversation):
         return []
 
 
-def llmresponse(userMessage, client, bot):
+def _llmresponse(userMessage, client, bot):
     """
     Function to get responses from OpenAI and continue the conversation
 
@@ -80,4 +92,4 @@ def llmresponse(userMessage, client, bot):
             {"role": "assistant", "content": response.choices[0].message.content}
         )
         bot.reply_to(userMessage, response.choices[0].message.content)
-        callOpenAI(userMessage, bot, False)
+        _callOpenAI(userMessage, bot, False)
