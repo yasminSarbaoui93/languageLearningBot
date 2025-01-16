@@ -16,7 +16,6 @@ credential = DefaultAzureCredential()
 cosmos_endpoint = os.getenv("COSMOS_ACCOUNT_URI")
 if not cosmos_endpoint:
     raise ValueError("COSMOS_ACCOUNT_URI is not set")
-
 cosmos_client = CosmosClient(cosmos_endpoint, credential=credential)
 dictionary_database = cosmos_client.get_database_client("dictionary")
 words_container = dictionary_database.get_container_client("words")
@@ -25,7 +24,7 @@ user_container = dictionary_database.get_container_client("users")
 
 def get_all_words(first_name: str, last_name: str, telegram_id: str, username: str):
     """
-    Function to get all the words from the dictionary for a given user
+    Function to get all the words from the dictionary of a user, given its unique telegram_id
 
     args:
     user_id: the user id to get the words for
@@ -36,11 +35,10 @@ def get_all_words(first_name: str, last_name: str, telegram_id: str, username: s
     user_id = _extract_user_id_from_cosmos(first_name, last_name, telegram_id, username)
     items = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = @user_id", parameters=[dict(name="@user_id", value=user_id)]))
     words = [[item['text'], item['translation']['text']] for item in items]
-    #words = [item['translation']['text'] for item in items]
     return words
 
 
-def _extract_user_id_from_cosmos(first_name: str, last_name: str, telegram_id: str, username: str):
+def _extract_user_id_from_cosmos(first_name: str, last_name: str, telegram_id: str, username: str) ->str:
     """
     search query to check if there is a user with the given user_id on cosmos db
 
@@ -56,24 +54,28 @@ def _extract_user_id_from_cosmos(first_name: str, last_name: str, telegram_id: s
     query = "SELECT * FROM c WHERE c.telegram_id = @telegram_id AND c.partition_key = 'shared'"
     parameters = [dict(name="@telegram_id", value=telegram_id)]
     items = list(user_container.query_items(query, parameters))
+    #if no user with the given telegram_id is found, create a new user
     if len(items) == 0:
-        #create a new item in cosmos DB in the list users with partition_key = "shared", name = message.from_user.first_name, surname = message.from_user.last_name, user_id = message.from_user.id, email = ""
-        user_id = str(uuid.uuid4())
-        user_container.create_item(body={
-            "name": first_name,
-            "surname": last_name,
-            "telegram_id": telegram_id,
-            "email": "",
-            "id": user_id,
-            "username": username,
-            "partition_key": "shared"
-        })
-        return user_id
+        return _create_user_in_cosmos(first_name, last_name, telegram_id, username)
     user_id = items[0]['id']
     return user_id
-    
-    
-def save_word(text: str, translation: str):
+
+
+def _create_user_in_cosmos(first_name: str, last_name: str, telegram_id: str, username: str):
+    user_id = str(uuid.uuid4())
+    user_container.create_item(body={
+        "name": first_name,
+        "surname": last_name,
+        "telegram_id": telegram_id,
+        "email": "",
+        "id": user_id,
+        "username": username,
+        "partition_key": "shared"
+    })
+    return user_id
+
+
+def save_word(text: str, translation: str, first_name: str, last_name: str, telegram_id: str, username: str):
     """
     Function to save a new word to the dictionary in CosmosDB
 
@@ -84,13 +86,11 @@ def save_word(text: str, translation: str):
     returns:
     boolean: a boolean indicating if the word has been saved or not
     """
-    text = text.lower()
-    translation = translation.lower()
-    unique_id = str(uuid.uuid4())
     language_code = detect_language_code(text)
     translation_language_code = detect_language_code(translation)
-    
-    # Check, if the generated unique id is already in use
+    user_id = _extract_user_id_from_cosmos(first_name, last_name, telegram_id, username)
+    # Generate an id to store word in cosmos and check, if the generated unique id is already in use
+    unique_id = str(uuid.uuid4())
     words_with_same_id = list(words_container.query_items(query="SELECT * FROM c WHERE c.id = @id", parameters=[dict(name="@id", value=unique_id)], enable_cross_partition_query=True))
     num_words_with_same_id = len(words_with_same_id)
     while num_words_with_same_id != 0:
@@ -106,7 +106,7 @@ def save_word(text: str, translation: str):
     # Save the word to the database
     words_container.create_item(body={
         "id":unique_id, 
-        "user_id":"553fcaa0-2530-472c-9126-ffec24c62a6c", 
+        "user_id":user_id, 
         "language_code": language_code, 
         "text":text, 
         "translation": {

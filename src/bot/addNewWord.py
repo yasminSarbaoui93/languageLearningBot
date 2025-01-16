@@ -57,7 +57,7 @@ def _save_word_to_db(user_message, bot):
     translation = user_message.text
     
     try:
-        save_word(nativelanguage_word, translation)
+        save_word(nativelanguage_word, translation, user_message.from_user.first_name, user_message.from_user.last_name, str(user_message.from_user.id), user_message.from_user.username)
         bot_response = f"The word <b>{nativelanguage_word}</b> has been added to the dictionary"
     except Exception as e:
         print(f"An error occurred: {e}")
