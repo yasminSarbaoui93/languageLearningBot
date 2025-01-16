@@ -1,4 +1,6 @@
 import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 import telebot
 from dotenv import load_dotenv
 from src.bot.randomTerms import send_random_word

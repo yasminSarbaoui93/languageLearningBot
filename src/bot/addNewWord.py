@@ -25,7 +25,8 @@ def _ask_for_original_word(user_message, bot):
     user_message: the message object from the user
     bot: the bot object to send the message
     """
-    bot.reply_to(user_message, f"Type the english word you want to add to the dictionary")
+    #bot.reply_to(user_message, f"Type the english word you want to add to the dictionary")
+    bot.send_message(user_message.chat.id, f"Type the english word you want to add to the dictionary")
     bot.register_next_step_handler(user_message, lambda user_message: _ask_for_translated_word(user_message, bot))
 
 
@@ -39,9 +40,8 @@ def _ask_for_translated_word(user_message, bot):
     """
     global nativelanguage_word
     nativelanguage_word = user_message.text
-    bot.reply_to(
-        user_message, f"Type the German translation of the word {nativelanguage_word}"
-    )
+    #bot.reply_to(user_message, f"Type the German translation of the word {nativelanguage_word}")
+    bot.send_message(user_message.chat.id, f"Type the German translation of the word {nativelanguage_word}")
     bot.register_next_step_handler(user_message, lambda user_message: _save_word_to_db(user_message, bot))    
 
 
@@ -67,4 +67,11 @@ def _save_word_to_db(user_message, bot):
 
     nativelanguage_word = ""
     translation = ""
+    print(f"chat id= {user_message.chat.id}")
+    print(f"user id= {user_message.from_user.id}")
+    print(f"username= {user_message.from_user.username}")
+    print(f"name= {user_message.from_user.first_name}")
+    print(f"last name= {user_message.from_user.last_name}")
+
+
     bot.send_message(user_message.chat.id, bot_response, parse_mode='HTML')
