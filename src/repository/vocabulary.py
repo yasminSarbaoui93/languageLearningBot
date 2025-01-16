@@ -30,6 +30,7 @@ def get_all_words(first_name, last_name, telegram_id, username):
     returns:
     words: a list of all the words in the dictionary for the user
     """
+    telegram_id = str(telegram_id)
     user_id = _extract_user_id_from_cosmos(first_name, last_name, telegram_id, username)
     
     items = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = @user_id", parameters=[dict(name="@user_id", value=user_id)]))
@@ -50,21 +51,22 @@ def _extract_user_id_from_cosmos(first_name, last_name, telegram_id, username):
     returns:
     user_id: the id of the user object in cosmos db
     """
-    query = "SELECT * FROM c WHERE c.telegram_id = @telegram_id"
+    query = "SELECT * FROM c WHERE c.telegram_id = @telegram_id AND c.partition_key = 'shared'"
     parameters = [dict(name="@telegram_id", value=telegram_id)]
     items = list(user_container.query_items(query, parameters))
-    
     if len(items) == 0:
         #create a new item in cosmos DB in the list users with partition_key = "shared", name = message.from_user.first_name, surname = message.from_user.last_name, user_id = message.from_user.id, email = ""
+        user_id = str(uuid.uuid4())
         user_container.create_item(body={
             "name": first_name,
             "surname": last_name,
             "telegram_id": telegram_id,
             "email": "",
+            "id": user_id,
             "username": username,
             "partition_key": "shared"
         })
-        items = list(user_container.query_items(query, parameters))
+        return user_id
     user_id = items[0]['id']
     return user_id
     

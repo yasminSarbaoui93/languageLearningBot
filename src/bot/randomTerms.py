@@ -4,12 +4,9 @@ import random
 import os
 import pandas as pd
 from src.repository.vocabulary import get_all_words
-from dotenv import load_dotenv
 
 
-load_dotenv()
-user_id = os.getenv("USER_ID")
-german_words = get_all_words(user_id)
+
 
 
 def check_response(message, learning_language_word, bot):
@@ -35,6 +32,8 @@ def send_random_word(bot, message):
     bot: the bot object to send the message
     message: the message object from the user
     """
+    global german_words
+    german_words = get_all_words(message.from_user.first_name, message.from_user.last_name, message.from_user.id, message.from_user.username)
     random_word = random.choice(german_words)
     native_language_word = random_word[0]
     learning_language_word = random_word[1]
