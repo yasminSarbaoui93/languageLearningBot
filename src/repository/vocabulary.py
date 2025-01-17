@@ -130,3 +130,19 @@ def delete_word(user_id: str, text: str):
     else:
         # No words to delete found.
         return False
+    
+
+def add_base_and_learning_language_to_user(user_id: str, base_language: str, learning_language: str):
+    """
+    Function to add the base language and learning language to the user in the database
+
+    args:
+    base_language: the base language of the user
+    learning_language: the language the user wants to learn
+    """
+    user_container.upsert_item(body={
+        "id": user_id,
+        "base_language": base_language,
+        "learning_language": learning_language,
+        "partition_key": "shared"
+    })

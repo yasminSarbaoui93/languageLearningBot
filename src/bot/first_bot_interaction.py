@@ -3,6 +3,7 @@ import openai
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
+from src.repository.vocabulary import add_base_and_learning_language_to_user
 
 
 load_dotenv()
@@ -40,4 +41,5 @@ def _transform_into_language_code_base(user_message, bot, chat_history, learning
     base_language_code = response.choices[0].message.content
     chat_history.append({"role": "assistant", "content": f"Great! You just created your dictionary <b>{base_language_code}-{learning_language_code}</b> and <b>{learning_language_code}-{base_language_code}</b>"})
     bot.send_message(user_message.chat.id, chat_history[8]["content"], parse_mode='HTML')
+    add_base_and_learning_language_to_user(user_id, base_language_code, learning_language_code)
     chat_history.append({"role": "assistant", "content": "Now you can start adding words to your dictionary by typing /add, or see the list of available commands through /help"})
