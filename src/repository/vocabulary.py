@@ -35,15 +35,8 @@ def get_or_create_user_id_in_DB(telegram_id: str, username: str, first_name: str
     items = list(user_container.query_items(query, parameters=[dict(name="@telegram_id", value=telegram_id)]))
     if len(items) == 0:
         user_id = str(uuid.uuid4())
-        user_container.create_item(body={
-            "name": first_name,
-            "surname": last_name,
-            "telegram_id": telegram_id,
-            "email": "",
-            "id": user_id,
-            "username": username,
-            "partition_key": "shared"
-        })
+        new_user = User(user_id, first_name, str(last_name), username, "", "", "", telegram_id, "shared")
+        user_container.create_item(body=new_user.__dict__)
         return user_id    
     user_id = items[0]['id']
     return user_id
@@ -92,16 +85,8 @@ def save_word(user_id: str, text: str, translation: str):
         raise Exception("Duplicate word found")
     
     # Save the word to the database
-    words_container.create_item(body={
-        "id":unique_id, 
-        "user_id":user_id, 
-        "language_code": language_code, 
-        "text":text, 
-        "translation": {
-            "text": translation, 
-            "language_code": translation_language_code
-        }       
-    })
+    new_word = Word(unique_id, user_id, language_code, text, translation, translation_language_code)
+    words_container.create_item(body=new_word.__dict__)
 
 
 def delete_word(user_id: str, text: str):
@@ -143,5 +128,5 @@ def add_base_and_learning_language_to_user(user_id: str, base_language: str, lea
     """
     user = user_container.read_item(item=user_id, partition_key="shared")
     user_container.upsert_item(body=user)
-    update_user = User(user_id, user["name"], user["surname"], user["email"], base_language, learning_language, user["telegram_id"], user["partition_key"])
-    user_container.upsert_item(body=update_user.__dict__)
+    updated_user = User(user_id, user["name"], user["surname"], user["email"], base_language, learning_language, user["telegram_id"], user["partition_key"])
+    user_container.upsert_item(body=updated_user.__dict__)

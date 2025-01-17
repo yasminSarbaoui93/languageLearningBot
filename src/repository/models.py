@@ -10,10 +10,11 @@ class Word:
         }
 
 class User:
-    def __init__(self, id: str, name: str, surname: str, email: str, base_language: str, learning_language: str, telegram_id: str, partition_key: str = "shared"):
+    def __init__(self, id: str, name: str, surname: str, username: str,email: str, base_language: str, learning_language: str, telegram_id: str, partition_key: str = "shared"):
         self.id = id
         self.name = name
         self.surname = surname
+        self.username = username
         self.email = email
         self.base_language = base_language
         self.learning_language = learning_language
