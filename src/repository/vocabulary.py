@@ -7,6 +7,7 @@ from azure.cosmos import exceptions, CosmosClient, PartitionKey
 from azure.identity import DefaultAzureCredential
 import uuid
 from services.detect_language import detect_language_code
+from .models import User, Word
 
 """
 Creating connection to CosmosDB
@@ -22,27 +23,26 @@ words_container = dictionary_database.get_container_client("words")
 user_container = dictionary_database.get_container_client("users")
 
 
-def get_or_create_user_id_in_DB(telegram_id: str, username: str, first_name: str, last_name: str | None) -> str:
+def get_or_create_user_id(telegram_id: str, username: str, first_name: str, last_name: str | None) -> str:
     """
     Function to lookup a user in the database by its telegram_id or creates a new user if it does not exist yet
 
     args:
-    username: If we need to create a new user, this is the username of the user.
+    telegram_id: the telegram id of the user, user_message.from_user.id
+    username: the name the user should get in case it doesn't exist 
+    first_name: the first name of the user
+    last_name: the last name of the user
+
+    returns:
+    user_id: the unique id of the user in the database
     """
     telegram_id = str(telegram_id)
     query = "SELECT * FROM c WHERE c.telegram_id = @telegram_id AND c.partition_key = 'shared'"
     items = list(user_container.query_items(query, parameters=[dict(name="@telegram_id", value=telegram_id)]))
     if len(items) == 0:
         user_id = str(uuid.uuid4())
-        user_container.create_item(body={
-            "name": first_name,
-            "surname": last_name,
-            "telegram_id": telegram_id,
-            "email": "",
-            "id": user_id,
-            "username": username,
-            "partition_key": "shared"
-        })
+        new_user = User(user_id, first_name, str(last_name), username, "", "", "", telegram_id, "shared")
+        user_container.create_item(body=new_user.__dict__)
         return user_id    
     user_id = items[0]['id']
     return user_id
@@ -91,16 +91,8 @@ def save_word(user_id: str, text: str, translation: str):
         raise Exception("Duplicate word found")
     
     # Save the word to the database
-    words_container.create_item(body={
-        "id":unique_id, 
-        "user_id":user_id, 
-        "language_code": language_code, 
-        "text":text, 
-        "translation": {
-            "text": translation, 
-            "language_code": translation_language_code
-        }       
-    })
+    new_word = Word(unique_id, user_id, language_code, text, translation, translation_language_code)
+    words_container.create_item(body=new_word.__dict__)
 
 
 def delete_word(user_id: str, text: str):
@@ -130,3 +122,30 @@ def delete_word(user_id: str, text: str):
     else:
         # No words to delete found.
         return False
+    
+
+def add_base_and_learning_language_to_user(user_id: str, base_language: str, learning_language: str):
+    """
+    Function to add the base language and learning language to the user in the database
+
+    args:
+    base_language: the base language of the user
+    learning_language: the language the user wants to learn
+    """
+    user = user_container.read_item(item=user_id, partition_key="shared")
+    user_container.upsert_item(body=user)
+    updated_user = User(user_id, user["name"], user["surname"], user["username"],user["email"], base_language, learning_language, user["telegram_id"], user["partition_key"])
+    user_container.upsert_item(body=updated_user.__dict__)
+
+def extract_learning_language_code(user_id: str) -> str:
+    """
+    Function to extract the learning language of the user from the database
+
+    args:
+    user_id: the user id to get the learning language for
+
+    returns:
+    learning_language: the language the user wants to learn
+    """
+    user = user_container.read_item(item=user_id, partition_key="shared")
+    return user["learning_language"]

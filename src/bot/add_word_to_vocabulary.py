@@ -1,7 +1,7 @@
 """This file contains the function to be called by the bot to add a new word to the dictionary"""
 import os
 from src.repository.vocabulary import save_word
-from src.repository.vocabulary import get_all_words, get_or_create_user_id_in_DB
+from src.repository.vocabulary import get_all_words, get_or_create_user_id
 
 
 base_language_word = ""
@@ -55,7 +55,7 @@ def _save_word_to_db(user_message, bot):
     """
     global base_language_word, learning_language_word
     learning_language_word = user_message.text
-    user_id = get_or_create_user_id_in_DB(str(user_message.from_user.id), user_message.from_user.username, user_message.from_user.first_name, user_message.from_user.last_name)
+    user_id = get_or_create_user_id(str(user_message.from_user.id), user_message.from_user.username, user_message.from_user.first_name, user_message.from_user.last_name)
     try:
         save_word(user_id, base_language_word, learning_language_word)
         bot_response = f"The word <b>{base_language_word}</b> = <b>{learning_language_word}</b> has been added to the dictionary"
