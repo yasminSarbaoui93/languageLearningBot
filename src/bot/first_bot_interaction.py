@@ -5,7 +5,6 @@ import os
 from dotenv import load_dotenv
 from src.repository.vocabulary import add_base_and_learning_language_to_user
 
-
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI()

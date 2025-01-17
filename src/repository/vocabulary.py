@@ -7,6 +7,7 @@ from azure.cosmos import exceptions, CosmosClient, PartitionKey
 from azure.identity import DefaultAzureCredential
 import uuid
 from services.detect_language import detect_language_code
+from .models import User, Word
 
 """
 Creating connection to CosmosDB
@@ -140,18 +141,7 @@ def add_base_and_learning_language_to_user(user_id: str, base_language: str, lea
     base_language: the base language of the user
     learning_language: the language the user wants to learn
     """
-    
-    existing_item = user_container.read_item(item=user_id, partition_key="shared")
-    # Update the necessary fields
-    existing_item["base_language"] = base_language
-    existing_item["learning_language"] = learning_language
-
-    # Upsert the modified item
-    user_container.upsert_item(body=existing_item)
-
-    user_container.upsert_item(body={
-        "id": user_id,
-        "base_language": base_language,
-        "learning_language": learning_language,
-        "partition_key": "shared"
-    })
+    user = user_container.read_item(item=user_id, partition_key="shared")
+    user_container.upsert_item(body=user)
+    update_user = User(user_id, user["name"], user["surname"], user["email"], base_language, learning_language, user["telegram_id"], user["partition_key"])
+    user_container.upsert_item(body=update_user.__dict__)

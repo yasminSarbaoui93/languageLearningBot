@@ -18,15 +18,14 @@ bot = telebot.TeleBot(API_TOKEN)
 
 
 # Create a message handler for the /start and /help commands
-@bot.message_handler(commands=["start", "help"])
+@bot.message_handler(commands=["start"])
 def send_welcome(message):
-    #bot.reply_to(message, "Welcome! type /info to get more information")
     welcome_handling(message, bot)
 
 # Create a message handler for the /start and /help commands
 @bot.message_handler(commands=["help"])
 def send_help(message):
-    bot.reply_to(message, "Welcome! type /info to get more information")
+    bot.reply_to(message, "These are the available commands:\n/info - Get information about the bot\n/bye - Say goodbye to the bot\n/random - Get a random word to translate\n/conversation - Start a conversation with the bot\n/add - Add a word to the dictionary\n/remove - Remove a word from the dictionary\n/start - Change the language of the bot\n/help - Get a list of available commands")
     
 
 # Create a message handler for the /info command
