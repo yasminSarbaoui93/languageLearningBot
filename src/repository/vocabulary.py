@@ -128,5 +128,18 @@ def add_base_and_learning_language_to_user(user_id: str, base_language: str, lea
     """
     user = user_container.read_item(item=user_id, partition_key="shared")
     user_container.upsert_item(body=user)
-    updated_user = User(user_id, user["name"], user["surname"], user["email"], base_language, learning_language, user["telegram_id"], user["partition_key"])
+    updated_user = User(user_id, user["name"], user["surname"], user["username"],user["email"], base_language, learning_language, user["telegram_id"], user["partition_key"])
     user_container.upsert_item(body=updated_user.__dict__)
+
+def extract_learning_language_code(user_id: str) -> str:
+    """
+    Function to extract the learning language of the user from the database
+
+    args:
+    user_id: the user id to get the learning language for
+
+    returns:
+    learning_language: the language the user wants to learn
+    """
+    user = user_container.read_item(item=user_id, partition_key="shared")
+    return user["learning_language"]
