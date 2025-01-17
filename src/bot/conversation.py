@@ -5,7 +5,8 @@ import openai
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-from src.repository.vocabulary import get_all_words, get_or_create_user_id_fromtelegram
+from src.repository.vocabulary import get_all_words, get_or_create_user_id_in_DB
+
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -16,12 +17,12 @@ chat_history = []
 
 def initializeConversation(message, bot, newConversation):
     global user_known_words, chat_history
-    user_id = get_or_create_user_id_fromtelegram(str(message.from_user.id), message.from_user.username, message.from_user.first_name, message.from_user.last_name)
+    user_id = get_or_create_user_id_in_DB(str(message.from_user.id), message.from_user.username, message.from_user.first_name, message.from_user.last_name)
     all_words = get_all_words(user_id)
     user_known_words = []
     for i in range(len(all_words)):
         user_known_words.append(str(all_words[i][1]))
-    user_known_words = str(user_known_words)
+    user_known_words = str(user_known_words) #might be misunderstandable the fact that in random terms i call user_known_words the list of german words + translations while here only german words
     print(f"\nDictionary from user {message.from_user.first_name} and dictionary is: containing {len(all_words)} words\n")
     _manageConversation(message, bot, newConversation, [])
 

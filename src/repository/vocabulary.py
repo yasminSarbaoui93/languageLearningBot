@@ -22,7 +22,7 @@ words_container = dictionary_database.get_container_client("words")
 user_container = dictionary_database.get_container_client("users")
 
 
-def get_or_create_user_id_fromtelegram(telegram_id: str, username: str, first_name: str, last_name: str | None) -> str:
+def get_or_create_user_id_in_DB(telegram_id: str, username: str, first_name: str, last_name: str | None) -> str:
     """
     Function to lookup a user in the database by its telegram_id or creates a new user if it does not exist yet
 
