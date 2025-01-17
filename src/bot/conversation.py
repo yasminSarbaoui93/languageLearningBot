@@ -5,7 +5,7 @@ import openai
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-from src.repository.vocabulary import get_all_words, get_or_create_user_id_in_DB, extract_learning_language_code
+from src.repository.vocabulary import get_all_words, get_or_create_user_id, extract_learning_language_code
 
 
 load_dotenv()
@@ -15,7 +15,7 @@ client = OpenAI()
 
 def initializeConversation(message, bot, newConversation):
     global user_known_words, chat_history, user_id
-    user_id = get_or_create_user_id_in_DB(str(message.from_user.id), message.from_user.username, message.from_user.first_name, message.from_user.last_name)
+    user_id = get_or_create_user_id(str(message.from_user.id), message.from_user.username, message.from_user.first_name, message.from_user.last_name)
     all_words = get_all_words(user_id)
     user_known_words = []
     for i in range(len(all_words)):
