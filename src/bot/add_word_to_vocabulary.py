@@ -33,7 +33,7 @@ def _ask_for_base_language_word(user_message, bot):
 
 def _ask_for_learning_language_word(user_message, bot):
     """
-    Function to ask the user for the translation in the larning language of the word to be added to the dictionary. This function I add because I prefer to put my own translation instead of the dictionary one (e.g. some might prefer using some dialect words instead of the official ones)
+    Function to ask the user for the translation in the learning language of the word to be added to the dictionary. This function I add because I prefer to put my own translation instead of the dictionary one (e.g. some might prefer using some dialect words instead of the official ones)
     
     args:
     user_message: the message object from the user
