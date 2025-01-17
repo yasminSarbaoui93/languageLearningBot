@@ -116,9 +116,11 @@ def delete_word(user_id: str, text: str):
     language_code = detect_language_code(text)
 
     if language_code == "en":
-        items = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = '553fcaa0-2530-472c-9126-ffec24c62a6c' AND c.text = @text", parameters=[dict(name="@text", value=text)]))
+        query = "SELECT * FROM c WHERE c.user_id = @user_id AND c.text = @text"
+        items = list(words_container.query_items(query, parameters=[dict(name="@text", value=text), dict(name="@user_id", value=user_id)]))
     else:
-        items = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = '553fcaa0-2530-472c-9126-ffec24c62a6c' AND c.translation.text = @text", parameters=[dict(name="@text", value=text)]))
+        query = "SELECT * FROM c WHERE c.user_id = @user_id AND c.translation.text = @text"
+        items = list(words_container.query_items(query, parameters=[dict(name="@text", value=text), dict(name="@user_id", value=user_id)]))
     
     # Check if there are any words to delete
     if len(items) != 0:
