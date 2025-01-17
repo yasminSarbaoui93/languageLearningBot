@@ -23,12 +23,18 @@ words_container = dictionary_database.get_container_client("words")
 user_container = dictionary_database.get_container_client("users")
 
 
-def get_or_create_user_id_in_DB(telegram_id: str, username: str, first_name: str, last_name: str | None) -> str:
+def get_or_create_user_id(telegram_id: str, username: str, first_name: str, last_name: str | None) -> str:
     """
     Function to lookup a user in the database by its telegram_id or creates a new user if it does not exist yet
 
     args:
-    username: If we need to create a new user, this is the username of the user.
+    telegram_id: the telegram id of the user, user_message.from_user.id
+    username: the name the user should get in case it doesn't exist 
+    first_name: the first name of the user
+    last_name: the last name of the user
+
+    returns:
+    user_id: the unique id of the user in the database
     """
     telegram_id = str(telegram_id)
     query = "SELECT * FROM c WHERE c.telegram_id = @telegram_id AND c.partition_key = 'shared'"
