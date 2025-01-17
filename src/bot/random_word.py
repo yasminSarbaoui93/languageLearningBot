@@ -14,7 +14,6 @@ def send_random_word(bot, message):
     bot: the bot object to send the message
     message: the message object from the user
     """
-    global user_known_words
     user_id = get_or_create_user_id_in_DB(str(message.from_user.id), message.from_user.username, message.from_user.first_name, message.from_user.last_name)
     user_known_words = get_all_words(user_id)
     print(f"\nExtracting a random word from dictionary of userid: {user_id} and telegramid: {message.from_user.id} containing {len(user_known_words)} words\n")
