@@ -48,13 +48,8 @@ def _manageConversation(message, bot, newConversation, chat_history):
                 message, f"Hallo, ich kann dir helfen zu Deutsch zu sprechen! 🇩🇪" + '\n' + "Remember you can end the conversation anytime by typig `end`"
             )
             chat_history.append({"role": "assistant", "content": assistantMessage.text})
-            bot.register_next_step_handler(
-                message, lambda msg: _get_llm_response(msg, chat_history, client, bot)
-            )
-        else:
-            bot.register_next_step_handler(
-                message, lambda msg: _get_llm_response(msg, chat_history, client, bot)
-            )
+        
+        bot.register_next_step_handler(message, lambda msg: _get_llm_response(msg, chat_history, client, bot))
         return chat_history
     except Exception as e:
         print(f"An error occurred: {e}")
