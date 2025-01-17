@@ -28,10 +28,10 @@ def _ask_for_base_language_word(user_message, bot):
     bot: the bot object to send the message
     """
     bot.send_message(user_message.chat.id, f"Type the word you want to add to the dictionary in your <b>base language</b>", parse_mode='HTML')
-    bot.register_next_step_handler(user_message, lambda user_message: _ask_for_learninig_language_word(user_message, bot))
+    bot.register_next_step_handler(user_message, lambda user_message: _ask_for_learning_language_word(user_message, bot))
 
 
-def _ask_for_learninig_language_word(user_message, bot):
+def _ask_for_learning_language_word(user_message, bot):
     """
     Function to ask the user for the translation in the larning language of the word to be added to the dictionary. This function I add because I prefer to put my own translation instead of the dictionary one (e.g. some might prefer using some dialect words instead of the official ones)
     
