@@ -11,8 +11,6 @@ from src.repository.vocabulary import get_all_words, get_or_create_user_id_in_DB
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI()
-chat_history = []
-"""array to store the conversation history locally, initialized with a system message"""
 
 
 def initializeConversation(message, bot, newConversation):

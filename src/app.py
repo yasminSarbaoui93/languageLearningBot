@@ -7,6 +7,7 @@ from bot.random_word import send_random_word
 from src.bot.conversation import initializeConversation
 from bot.add_word_to_vocabulary import add_word_to_dictionary
 from bot.delete_word_from_vocabulary import remove_word
+from bot.first_bot_interaction import welcome_handling
 
 # Load the environment variables
 load_dotenv()
@@ -19,8 +20,14 @@ bot = telebot.TeleBot(API_TOKEN)
 # Create a message handler for the /start and /help commands
 @bot.message_handler(commands=["start", "help"])
 def send_welcome(message):
-    bot.reply_to(message, "Welcome! type /info to get more information")
+    #bot.reply_to(message, "Welcome! type /info to get more information")
+    welcome_handling(message, bot)
 
+# Create a message handler for the /start and /help commands
+@bot.message_handler(commands=["help"])
+def send_help(message):
+    bot.reply_to(message, "Welcome! type /info to get more information")
+    
 
 # Create a message handler for the /info command
 @bot.message_handler(commands=["info"])
