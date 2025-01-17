@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from azure.cosmos import exceptions, CosmosClient, PartitionKey
 from azure.identity import DefaultAzureCredential
 import uuid
-from src.services.languageDetection import detect_language_code
+from services.detect_language import detect_language_code
 
 """
 Creating connection to CosmosDB
@@ -29,6 +29,7 @@ def get_or_create_user_id_in_DB(telegram_id: str, username: str, first_name: str
     args:
     username: If we need to create a new user, this is the username of the user.
     """
+    telegram_id = str(telegram_id)
     query = "SELECT * FROM c WHERE c.telegram_id = @telegram_id AND c.partition_key = 'shared'"
     items = list(user_container.query_items(query, parameters=[dict(name="@telegram_id", value=telegram_id)]))
     if len(items) == 0:

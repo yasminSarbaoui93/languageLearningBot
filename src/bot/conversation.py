@@ -72,7 +72,7 @@ def _get_llm_response(user_message, chat_history, client, bot):
     bot: the bot object to send the message
     """
     if user_message.text == "end":
-        bot.reply_to(user_message, "Conversation ended")
+        bot.reply_to(user_message, "<b>Conversation ended</b>", parse_mode='HTML')
     else:
         chat_history.append({"role": "user", "content": user_message.text})
         response = client.chat.completions.create(model="gpt-4o", messages=chat_history)
@@ -80,6 +80,6 @@ def _get_llm_response(user_message, chat_history, client, bot):
         chat_history.append(
             {"role": "assistant", "content": response.choices[0].message.content}
         )
-        bot.reply_to(user_message, response.choices[0].message.content)
+        bot.send_message(user_message.chat.id, response.choices[0].message.content)
         _manageConversation(user_message, bot, False, chat_history)
         print(f"\n\n{chat_history}")

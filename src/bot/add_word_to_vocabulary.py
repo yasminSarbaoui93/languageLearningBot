@@ -27,7 +27,6 @@ def _ask_for_base_language_word(user_message, bot):
     user_message: the message object from the user
     bot: the bot object to send the message
     """
-    #bot.reply_to(user_message, f"Type the english word you want to add to the dictionary")
     bot.send_message(user_message.chat.id, f"Type the word you want to add to the dictionary in your <b>base language</b>", parse_mode='HTML')
     bot.register_next_step_handler(user_message, lambda user_message: _ask_for_learninig_language_word(user_message, bot))
 
@@ -42,7 +41,6 @@ def _ask_for_learninig_language_word(user_message, bot):
     """
     global base_language_word
     base_language_word = user_message.text
-    #bot.reply_to(user_message, f"Type the German learning_language_word of the word {base_language_word}")
     bot.send_message(user_message.chat.id, f"Type the translation of the word {base_language_word} in the <b>language you are learning</b>", parse_mode='HTML')
     bot.register_next_step_handler(user_message, lambda user_message: _save_word_to_db(user_message, bot))    
 

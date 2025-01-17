@@ -3,10 +3,10 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 import telebot
 from dotenv import load_dotenv
-from src.bot.randomTerms import send_random_word
+from bot.random_word import send_random_word
 from src.bot.conversation import initializeConversation
-from src.bot.addNewWord import add_word_to_dictionary
-from src.bot.removeWord import remove_word
+from bot.add_word_to_vocabulary import add_word_to_dictionary
+from bot.delete_word_from_vocabulary import remove_word
 
 # Load the environment variables
 load_dotenv()
