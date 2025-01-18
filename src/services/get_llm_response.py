@@ -25,7 +25,7 @@ def llm_response(chat_history: list) -> str | None:
     return response.choices[0].message.content
 
 
-def translate_sentence_with_llm(sentence: str, base_language_code: str) -> str | None:
+def translate_sentence_with_llm(sentence: str, base_language_code: str, additional_system_message = None) -> str | None:
     """
     Function to translate a sentence from a source language to a target language
 
@@ -37,7 +37,9 @@ def translate_sentence_with_llm(sentence: str, base_language_code: str) -> str |
     returns:
     translation: the translated sentence
     """
-    system_message = f"you are a language translator and all you have you do is respond to the user input message with its exact translation in the following language (code ISO): {base_language_code}. Do not add any additional information in your response, ONLY THE TRANSLATION OF THE USER MESSAGE. Do not eliminate the html commands (e.g. <b> or </b>)"
+    if additional_system_message is None:
+        additional_system_message = ""
+    system_message = f"you are a language translator and all you have you do is respond to the user input message with its exact translation in the following language (code ISO): {base_language_code}. Do not add any additional information in your response, ONLY THE TRANSLATION OF THE USER MESSAGE. Do not eliminate the html commands (e.g. <b> or </b>). {additional_system_message}"
     llm_query=[{"role":"system", "content": system_message}, {"role":"user", "content": sentence}]
     translation = llm_response(llm_query)
     return translation
