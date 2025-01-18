@@ -94,6 +94,7 @@ def _extract_base_language_code_and_save(user_message, bot, chat_history, learni
     chat_history.append({"role": "user", "content": user_message.text})
     base_language_code = user.base_language
     base_language_code_from_user_message = extracat_language_code_with_llm(user_message.text)
+   
     if base_language_code_from_user_message is None:
         bot_message = ""
         if base_language_code == "en" or len(base_language_code) < 2:
@@ -114,6 +115,7 @@ def _extract_base_language_code_and_save(user_message, bot, chat_history, learni
         bot.register_next_step_handler(user_message, lambda msg: _extract_base_language_code_and_save(msg, bot, chat_history, learning_language_code, user))
     
     else:
+        
         base_language_code = base_language_code_from_user_message
         bot_message = ""
         if base_language_code == "en" or len(base_language_code) < 2:
