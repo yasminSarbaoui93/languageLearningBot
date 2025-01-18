@@ -7,6 +7,7 @@ from bot.random_word import send_random_word
 from src.bot.conversation import initializeConversation
 from bot.add_word_to_vocabulary import add_word_to_dictionary
 from bot.delete_word_from_vocabulary import remove_word
+from bot.first_bot_interaction import welcome_handling
 
 # Load the environment variables
 load_dotenv()
@@ -17,10 +18,15 @@ bot = telebot.TeleBot(API_TOKEN)
 
 
 # Create a message handler for the /start and /help commands
-@bot.message_handler(commands=["start", "help"])
+@bot.message_handler(commands=["start"])
 def send_welcome(message):
-    bot.reply_to(message, "Welcome! type /info to get more information")
+    welcome_handling(message, bot)
 
+# Create a message handler for the /start and /help commands
+@bot.message_handler(commands=["help"])
+def send_help(message):
+    bot.reply_to(message, "These are the available commands:\n/info - Get information about the bot\n/bye - Say goodbye to the bot\n/random - Get a random word to translate\n/conversation - Start a conversation with the bot\n/add - Add a word to the dictionary\n/remove - Remove a word from the dictionary\n/start - Change the language of the bot\n/help - Get a list of available commands")
+    
 
 # Create a message handler for the /info command
 @bot.message_handler(commands=["info"])
@@ -43,7 +49,7 @@ def handle_random_word(message):
 # Create a message handler for the /conversation command
 @bot.message_handler(commands=["conversation"])
 def conversation_handler(message):
-    initializeConversation(message, bot, True)    
+    initializeConversation(message, bot)    
 
 
 # Create a message handler for the /add command

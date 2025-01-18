@@ -1,4 +1,4 @@
-# German Vocabulary Bot
+# Chatbot to support learning new languages
 
 A Telegram bot that helps you learn German.
 
