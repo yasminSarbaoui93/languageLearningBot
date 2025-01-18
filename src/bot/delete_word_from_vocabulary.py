@@ -50,4 +50,3 @@ def _delete_word(user_message, bot):
         bot_response = f"An error occurred while trying to remove the word <b>{word_to_be_deleted}</b> from your vocabulary."
     
     bot.send_message(user_message.chat.id, bot_response, parse_mode='HTML')
-    word_to_be_deleted = ""
