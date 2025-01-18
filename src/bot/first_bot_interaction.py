@@ -1,4 +1,4 @@
-from src.repository.vocabulary import get_or_create_user_id
+from src.repository.vocabulary import get_or_create_user
 import openai
 from openai import OpenAI
 import os
@@ -18,7 +18,8 @@ def welcome_handling(message, bot):
     bot: the bot object to send messages to the user
     """
     chat_history = []
-    user_id = get_or_create_user_id(str(message.from_user.id), message.from_user.username, message.from_user.first_name, message.from_user.last_name)
+    user = get_or_create_user(str(message.from_user.id), message.from_user.username, message.from_user.first_name, message.from_user.last_name)
+    user_id = user.id
     chat_history.append({"role": "system", "content": "We ask information about what language the user in interested in, and given the user input, you will have to extract in lower case the language code of the language selected by the user (NOT THE LANGUAGE CODE THAT THE USER IS TYPING IN!!). For example, if the user says 'English', you have to respond 'en', if the user says 'inglese', you have to respond 'en', if the user says 'spagnolo', you have to respond 'es'."})
     chat_history.append({"role": "assistant", "content": "Welcome to this language learning bot! I will guide you through the first steps to start learning with me."})
     bot.send_message(message.chat.id, chat_history[1]["content"])

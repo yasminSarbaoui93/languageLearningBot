@@ -23,7 +23,7 @@ words_container = dictionary_database.get_container_client("words")
 user_container = dictionary_database.get_container_client("users")
 
 
-def get_or_create_user_id(telegram_id: str, username: str, first_name: str, last_name: str | None) -> str:
+def get_or_create_user(telegram_id: str, username: str, first_name: str, last_name: str | None) -> User:
     """
     Function to lookup a user in the database by its telegram_id or creates a new user if it does not exist yet
 
@@ -39,13 +39,15 @@ def get_or_create_user_id(telegram_id: str, username: str, first_name: str, last
     telegram_id = str(telegram_id)
     query = "SELECT * FROM c WHERE c.telegram_id = @telegram_id AND c.partition_key = 'shared'"
     items = list(user_container.query_items(query, parameters=[dict(name="@telegram_id", value=telegram_id)]))
+    # items = user_container.query_items(query, parameters=[dict(name="@telegram_id", value=telegram_id)])
     if len(items) == 0:
         user_id = str(uuid.uuid4())
         new_user = User(user_id, first_name, str(last_name), username, "", "", "", telegram_id, "shared")
         user_container.create_item(body=new_user.__dict__)
-        return user_id    
-    user_id = items[0]['id']
-    return user_id
+        return new_user    
+    db_user = items[0]
+    user = User(db_user["id"], db_user["name"], db_user["surname"], db_user["username"], db_user["email"], db_user["base_language"], db_user["learning_language"], db_user["telegram_id"], db_user["partition_key"])
+    return user
 
 
 def get_all_words(user_id: str) -> list[list[str]]:

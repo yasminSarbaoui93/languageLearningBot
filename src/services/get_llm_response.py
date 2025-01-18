@@ -1,0 +1,43 @@
+import openai
+from openai import OpenAI
+import os
+from dotenv import load_dotenv
+from src.repository.vocabulary import get_all_words, get_or_create_user, extract_learning_language_code
+
+
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI()
+
+
+def llm_response(chat_history: list) -> str | None:
+    """
+    Function to get the response from OpenAI's language model
+
+    args:
+    chat_history: the conversation history array
+
+    returns:
+    response: the response from OpenAI's language model
+    """
+
+    response = client.chat.completions.create(model="gpt-4o", messages=chat_history)
+    return response.choices[0].message.content
+
+
+def translate_sentence_with_llm(sentence: str, base_language_code: str) -> str | None:
+    """
+    Function to translate a sentence from a source language to a target language
+
+    args:
+    sentence: the sentence to be translated
+    source_language: the language code of the source language
+    target_language: the language code of the target language
+
+    returns:
+    translation: the translated sentence
+    """
+    system_message = f"you are a language translator and all you have you do is respond to the user input message with its exact translation in the following language (code ISO): {base_language_code}. Do not add any additional information in your response, ONLY THE TRANSLATION OF THE USER MESSAGE. Do not eliminate the html commands (e.g. <b> or </b>)"
+    llm_query=[{"role":"system", "content": system_message}, {"role":"user", "content": sentence}]
+    translation = llm_response(llm_query)
+    return translation

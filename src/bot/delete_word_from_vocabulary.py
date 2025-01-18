@@ -2,7 +2,7 @@
 This file contains the functions to be called by the bot to add a new word to the user's vocabulary
 """
 import os
-from src.repository.vocabulary import delete_word, get_or_create_user_id
+from src.repository.vocabulary import delete_word, get_or_create_user
 
 
 def remove_word(user_message, bot):
@@ -38,7 +38,8 @@ def _delete_word(user_message, bot):
     """
     word_to_be_deleted = user_message.text
     bot_response = ""
-    user_id = get_or_create_user_id(str(user_message.from_user.id), user_message.from_user.username, user_message.from_user.first_name, user_message.from_user.last_name)
+    user = get_or_create_user(str(user_message.from_user.id), user_message.from_user.username, user_message.from_user.first_name, user_message.from_user.last_name)
+    user_id = user.id
     try:
         words_deleted = delete_word(user_id, word_to_be_deleted)
         if words_deleted:
