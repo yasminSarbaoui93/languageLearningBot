@@ -4,10 +4,6 @@ from src.repository.vocabulary import save_word
 from src.repository.vocabulary import get_all_words, get_or_create_user_id
 
 
-base_language_word = ""
-learning_language_word = ""
-
-
 def add_word_to_dictionary(user_message, bot):
     """
     Function to add a new word to the dictionary in CosmosDB
@@ -39,13 +35,12 @@ def _ask_for_learning_language_word(user_message, bot):
     user_message: the message object from the user
     bot: the bot object to send the message
     """
-    global base_language_word
     base_language_word = user_message.text
     bot.send_message(user_message.chat.id, f"Type the translation of the word {base_language_word} in the <b>language you are learning</b>", parse_mode='HTML')
-    bot.register_next_step_handler(user_message, lambda user_message: _save_word_to_db(user_message, bot))    
+    bot.register_next_step_handler(user_message, lambda user_message: _save_word_to_db(user_message, bot, base_language_word))    
 
 
-def _save_word_to_db(user_message, bot):
+def _save_word_to_db(user_message, bot, base_language_word):
     """
     Function to save the new word to the dictionary in CosmosDB
     
@@ -53,7 +48,6 @@ def _save_word_to_db(user_message, bot):
     user_message: the message object from the user
     bot: the bot object to send the message
     """
-    global base_language_word, learning_language_word
     learning_language_word = user_message.text
     user_id = get_or_create_user_id(str(user_message.from_user.id), user_message.from_user.username, user_message.from_user.first_name, user_message.from_user.last_name)
     try:
