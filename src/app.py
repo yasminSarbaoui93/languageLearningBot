@@ -49,7 +49,7 @@ def handle_random_word(message):
 # Create a message handler for the /conversation command
 @bot.message_handler(commands=["conversation"])
 def conversation_handler(message):
-    initializeConversation(message, bot, True)    
+    initializeConversation(message, bot)    
 
 
 # Create a message handler for the /add command
