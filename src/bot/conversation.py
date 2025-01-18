@@ -26,7 +26,7 @@ def initializeConversation(message, bot):
     learning_language_code = extract_learning_language_code(user_id)
     chat_history.append({"role": "system", "content": f"You are a bot that helps students to learn a new language. The language code ISO 639 of the language the student is learning is {learning_language_code} and this is the only language you must speak. You need to have simple conversations in the language they are learning ({learning_language_code}), with short sentences, using mostly present tense. You will mainly use terms from the user's vocabulary user_knowwn_words list, as these are the words the student knows. \nHere is the list of the terms the user knows: {user_known_words}"})
     if learning_language_code != "de":
-        ai_translation = client.chat.completions.create(model="gpt-4o", messages=[{"role":"user", "content": f"Translate the followin sentence to {learning_language_code}: Hallo, ich kann dir helfen zu 'xxx' zu sprechen! 'yyyy'. Replace 'xxx' with the language the user is learning and replace yyyy with the flag emojy of the country where the language belongs to"}])
+        ai_translation = client.chat.completions.create(model="gpt-4o", messages=[{"role":"user", "content": f"Translate the followin sentence to {learning_language_code}: Hallo, ich kann dir helfen zu 'xxx' zu sprechen! 'yyyy'. Replace 'xxx' with the language the user is learning and replace yyyy with the flag emoji of the country where the language belongs to"}])
         conversation_starter_message = ai_translation.choices[0].message.content
     else: 
         conversation_starter_message = f"Hallo, ich kann dir helfen zu Deutsch zu sprechen! 🇩🇪" + '\n' + "Remember you can end the conversation anytime by typig `end`"
