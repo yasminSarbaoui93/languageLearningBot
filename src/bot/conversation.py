@@ -1,7 +1,7 @@
 """
 This file contains the functions to be called by the bot that are used to start a conversation with the user and get responses from OpenAI
 """
-from src.repository.vocabulary import get_all_words, get_or_create_user, extract_learning_language_code
+from src.repository.vocabulary import get_all_words, get_or_create_user
 from src.services.get_llm_response import llm_response, text_in_base_language
 from src.services.detect_language import language_name_from_code
 
