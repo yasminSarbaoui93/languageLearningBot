@@ -14,7 +14,6 @@ client = OpenAI()
 
 
 def initializeConversation(message, bot):
-    global user_known_words, chat_history, user_id
     user_id = get_or_create_user_id(str(message.from_user.id), message.from_user.username, message.from_user.first_name, message.from_user.last_name)
     all_words = get_all_words(user_id)
     user_known_words = []
