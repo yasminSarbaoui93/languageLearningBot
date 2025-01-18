@@ -45,7 +45,7 @@ def translate_sentence_with_llm(sentence: str, base_language_code: str, addition
     return translation
 
 
-def text_in_base_language(base_language_code, text):
+def text_in_base_language(base_language_code, text, additional_system_message = None):
     """
     Function to translate a text to the base language of the user or return the text if the base language is English
 
@@ -59,5 +59,5 @@ def text_in_base_language(base_language_code, text):
     if base_language_code == "en" or len(base_language_code) < 2:
         return text
     else:
-        sentence_in_base_language = translate_sentence_with_llm(text, base_language_code)
+        sentence_in_base_language = translate_sentence_with_llm(text, base_language_code, additional_system_message)
     return sentence_in_base_language
