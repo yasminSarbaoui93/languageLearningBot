@@ -32,7 +32,6 @@ def _transform_into_language_code(user_message, bot, chat_history, user_id):
 
 
 def _transform_into_language_code_base(user_message, bot, chat_history, learning_language_code, user_id):
-    #implement this function to transform the language into a language code (e.g. "english" -> "en")
     chat_history.append({"role": "user", "content": user_message.text})
     response = client.chat.completions.create(model="gpt-4o", messages=chat_history)
     chat_history.append({"role": "assistant", "content": response.choices[0].message.content})
