@@ -49,7 +49,6 @@ def _extract_learning_language_code(user_message, bot, chat_history, user_id):
         bot.send_message(user_message.chat.id, assistant_message)
         bot.register_next_step_handler(user_message, lambda msg: _extract_learning_language_code(msg, bot, chat_history, user_id))
     else:
-        chat_history.append({"role": "assistant", "content": learning_language_code})
         assistant_message = f"2. What language you want to use as a base for your dictionary and our communications?"
         chat_history.append({"role": "assistant", "content": assistant_message})
         bot.send_message(user_message.chat.id, assistant_message)
@@ -79,7 +78,6 @@ def _extract_base_language_code_and_save(user_message, bot, chat_history, learni
         bot.register_next_step_handler(user_message, lambda msg: _extract_base_language_code_and_save(msg, bot, chat_history, learning_language_code, user_id))
     
     else:
-        chat_history.append({"role": "assistant", "content": base_language_code})
         assistant_message = f"Great! You just created your dictionary <b>{base_language_code}-{learning_language_code}</b> and <b>{learning_language_code}-{base_language_code}</b>"
         chat_history.append({"role": "assistant", "content": assistant_message})
         bot.send_message(user_message.chat.id, assistant_message, parse_mode='HTML')
