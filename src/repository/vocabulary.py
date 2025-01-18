@@ -124,7 +124,7 @@ def delete_word(user_id: str, text: str):
         return False
     
 
-def add_base_and_learning_language_to_user(user_id: str, base_language: str, learning_language: str):
+def save_user_base_and_learning_languages(user_id: str, base_language: str, learning_language: str):
     """
     Function to add the base language and learning language to the user in the database
 
