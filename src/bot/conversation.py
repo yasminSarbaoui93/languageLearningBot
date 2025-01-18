@@ -51,13 +51,8 @@ def _manageConversation(message, bot, newConversation, chat_history):
             
             assistantMessage = bot.reply_to(message, conversation_starter_message)
             chat_history.append({"role": "assistant", "content": assistantMessage.text})
-            bot.register_next_step_handler(
-                message, lambda msg: _get_llm_response(msg, chat_history, client, bot)
-            )
-        else:
-            bot.register_next_step_handler(
-                message, lambda msg: _get_llm_response(msg, chat_history, client, bot)
-            )
+        
+        bot.register_next_step_handler(message, lambda msg: _get_llm_response(msg, chat_history, client, bot))
         return chat_history
     except Exception as e:
         print(f"An error occurred: {e}")
