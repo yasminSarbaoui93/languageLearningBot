@@ -2,6 +2,8 @@ import os
 from dotenv import load_dotenv
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
+import pycountry
+from pycountry import languages
 
 load_dotenv()
 language_key = os.getenv("LANGUAGESTUDIO_KEY")
@@ -48,6 +50,9 @@ def language_name_from_code(language_code) -> str:
     returns:
     language_name: the language name of the language code
     """
-    client = _authenticate_client()
-    language_name = client.detect_language([language_code])[0].primary_language.name
-    return language_name
+    try:
+        language = pycountry.languages.get(alpha_2=language_code)
+        language_name = language.name
+        return language_name
+    except AttributeError:
+        return "Unknown language" 

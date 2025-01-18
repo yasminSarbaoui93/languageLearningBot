@@ -20,15 +20,14 @@ def initializeConversation(message, bot):
     
     learning_language_code = user.learning_language
     learning_language_name = language_name_from_code(learning_language_code)
-    learning_language_flag = f":flag_{learning_language_code}:"
     base_language_code = user.base_language
 
     system_message = f"You are a bot that helps students to learn a new language. The language code ISO 639 of the language the student is learning is {learning_language_code} and this is the only language you must speak. You need to have simple conversations in the language they are learning ({learning_language_code}), with short sentences, using mostly present tense. You will mainly use terms from the user's vocabulary user_knowwn_words list, as these are the words the student knows. \nHere is the list of the terms the user knows: {user_known_words}"
     chat_history.append({"role": "system", "content": system_message})
     
-    welcome_message_in_learning_language = text_in_base_language(learning_language_code, f"Hello, I can help you to learn {learning_language_name}! {learning_language_flag}")
+    welcome_message_in_learning_language = text_in_base_language(learning_language_code, f"Hello, I can help you to learn {learning_language_name}!")
     chat_history.append({"role": "assistant", "content": welcome_message_in_learning_language})  
-    bot.reply_to(message, welcome_message_in_learning_language)
+    bot.reply_to(message, {welcome_message_in_learning_language})
 
     information_message_in_base_language = "Remember you can end the conversation anytime by typig `end`"
     additional_system_message_instructions = "Do not translate the word 'end' (cause that's the command the user needs in the chatbot)"
