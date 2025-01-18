@@ -5,9 +5,6 @@ import os
 from src.repository.vocabulary import delete_word, get_or_create_user_id
 
 
-word_to_be_deleted = ""
-
-
 def remove_word(user_message, bot):
     """
     Function to add a new word to the user's vocabulary, to be called from telegram_bot.py
@@ -39,7 +36,6 @@ def _delete_word(user_message, bot):
     user_message: the message object from the user
     bot: the bot object to send messages to the user
     """
-    global word_to_be_deleted 
     word_to_be_deleted = user_message.text
     bot_response = ""
     user_id = get_or_create_user_id(str(user_message.from_user.id), user_message.from_user.username, user_message.from_user.first_name, user_message.from_user.last_name)
