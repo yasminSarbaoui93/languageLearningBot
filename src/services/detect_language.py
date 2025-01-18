@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
 
-
+  load_dotenv()
 load_dotenv()
 language_key = os.getenv("LANGUAGESTUDIO_KEY")
 language_endpoint = os.getenv("LANGUAGESTUDIO_ENDPOINT")
