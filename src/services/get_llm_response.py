@@ -43,3 +43,21 @@ def translate_sentence_with_llm(sentence: str, base_language_code: str, addition
     llm_query=[{"role":"system", "content": system_message}, {"role":"user", "content": sentence}]
     translation = llm_response(llm_query)
     return translation
+
+
+def text_in_base_language(base_language_code, text):
+    """
+    Function to translate a text to the base language of the user or return the text if the base language is English
+
+    args:
+    text: the text to be translated
+    base_language_code: the language code of the base language, ISO 639-1 or ISO 639-2
+
+    returns:
+    translation: the translated text
+    """
+    if base_language_code == "en" or len(base_language_code) < 2:
+        return text
+    else:
+        sentence_in_base_language = translate_sentence_with_llm(text, base_language_code)
+    return sentence_in_base_language
