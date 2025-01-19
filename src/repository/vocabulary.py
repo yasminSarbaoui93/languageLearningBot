@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from azure.cosmos import exceptions, CosmosClient, PartitionKey
 from azure.identity import DefaultAzureCredential
 import uuid
-from services.detect_language import detect_language_code
+from services.language_service import detect_language_code
 from .models import User, Word
 
 """

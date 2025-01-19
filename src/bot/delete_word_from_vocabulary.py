@@ -3,7 +3,7 @@ This file contains the functions to be called by the bot to add a new word to th
 """
 import os
 from src.repository.vocabulary import delete_word, get_or_create_user
-from src.services.get_llm_response import translate_to_language
+from services.llm_service import translate_to_language
 
 def remove_word(user_message, bot):
     """

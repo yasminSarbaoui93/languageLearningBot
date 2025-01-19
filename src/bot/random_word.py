@@ -2,7 +2,7 @@
 """
 import random
 from src.repository.vocabulary import get_all_words, get_or_create_user
-from src.services.get_llm_response import translate_to_language
+from services.llm_service import translate_to_language
 
 
 def send_random_word(bot, message):

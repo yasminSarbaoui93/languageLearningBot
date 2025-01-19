@@ -3,7 +3,7 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 #from detect_language import detect_language_code
-from src.services.detect_language import detect_language_code
+from services.language_service import detect_language_code
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")

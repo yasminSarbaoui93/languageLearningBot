@@ -1,6 +1,6 @@
 from src.repository.vocabulary import get_or_create_user
 from src.repository.vocabulary import save_user_base_and_learning_languages
-from src.services.get_llm_response import llm_response, translate_to_language
+from services.llm_service import llm_response, translate_to_language
 
 
 
