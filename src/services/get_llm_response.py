@@ -2,8 +2,8 @@ import openai
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-from src.repository.vocabulary import get_all_words, get_or_create_user, extract_learning_language_code
-from detect_language import detect_language_code
+#from detect_language import detect_language_code
+from src.services.detect_language import detect_language_code
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")

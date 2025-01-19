@@ -31,7 +31,7 @@ def initializeConversation(message, bot):
 
     information_message_in_base_language = "Remember you can end the conversation anytime by typig the following:"
     information_message_in_base_language = f"{translate_to_language(base_language_code, information_message_in_base_language)}: <b>end</b>"
-    bot.send_message(message.chat.id, information_message_in_base_language)
+    bot.send_message(message.chat.id, information_message_in_base_language, parse_mode='HTML')
     _manageConversation(message, bot, chat_history, base_language_code)
 
 
@@ -48,12 +48,7 @@ def _manageConversation(message, bot, chat_history, base_language_code):
     returns:
     chat_history: the conversation history
     """
-    try:
-        bot.register_next_step_handler(message, lambda msg: _get_llm_response(msg, chat_history, bot, base_language_code))
-        return chat_history
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return []
+    bot.register_next_step_handler(message, lambda msg: _get_llm_response(msg, chat_history, bot, base_language_code))
 
 
 def _get_llm_response(user_message, chat_history, bot, base_language_code):

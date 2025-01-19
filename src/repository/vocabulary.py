@@ -39,7 +39,6 @@ def get_or_create_user(telegram_id: str, username: str, first_name: str, last_na
     telegram_id = str(telegram_id)
     query = "SELECT * FROM c WHERE c.telegram_id = @telegram_id AND c.partition_key = 'shared'"
     items = list(user_container.query_items(query, parameters=[dict(name="@telegram_id", value=telegram_id)]))
-    # items = user_container.query_items(query, parameters=[dict(name="@telegram_id", value=telegram_id)])
     if len(items) == 0:
         user_id = str(uuid.uuid4())
         new_user = User(user_id, first_name, str(last_name), username, "", "", "", telegram_id, "shared")
