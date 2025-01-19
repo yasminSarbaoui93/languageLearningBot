@@ -64,5 +64,5 @@ def _save_word_to_db(user_message, bot, base_language_word, base_language_code):
         print(f"The word {base_language_word} = {learning_language_word} has been added to the dictionary for user {user_id}")
     except Exception as e:
         print(f"An error occurred: {e}")
-        bot_response_in_base_language = text_in_base_language(base_language_code, "The world could not be added to the dictionary")
+        bot_response_in_base_language = text_in_base_language(base_language_code, "The word could not be added to the dictionary")
     bot.send_message(user_message.chat.id, bot_response_in_base_language, parse_mode='HTML')
