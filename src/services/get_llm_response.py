@@ -3,7 +3,7 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 from src.repository.vocabulary import get_all_words, get_or_create_user, extract_learning_language_code
-
+from detect_language import detect_language_code
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -45,7 +45,7 @@ def translate_sentence_with_llm(sentence: str, base_language_code: str, addition
     return translation
 
 
-def text_in_base_language(base_language_code, text, additional_system_message = None):
+def translate_to_language(base_language_code, text, additional_system_message = None):
     """
     Function to translate a text to the base language of the user or return the text if the base language is English
 
@@ -56,7 +56,7 @@ def text_in_base_language(base_language_code, text, additional_system_message = 
     returns:
     translation: the translated text
     """
-    if base_language_code == "en" or len(base_language_code) < 2:
+    if base_language_code == "en" and detect_language_code(text)=="en" or len(base_language_code) < 2:     
         return text
     else:
         sentence_in_base_language = translate_sentence_with_llm(text, base_language_code, additional_system_message)

@@ -2,7 +2,7 @@
 This file contains the functions to be called by the bot that are used to start a conversation with the user and get responses from OpenAI
 """
 from src.repository.vocabulary import get_all_words, get_or_create_user
-from src.services.get_llm_response import llm_response, text_in_base_language
+from src.services.get_llm_response import llm_response, translate_to_language
 from src.services.detect_language import language_name_from_code
 
 
@@ -25,12 +25,12 @@ def initializeConversation(message, bot):
     system_message = f"You are a bot that helps students to learn a new language. The language code ISO 639 of the language the student is learning is {learning_language_code} and this is the only language you must speak. You need to have simple conversations in the language they are learning ({learning_language_code}), with short sentences, using mostly present tense. You will mainly use terms from the user's vocabulary user_knowwn_words list, as these are the words the student knows. \nHere is the list of the terms the user knows: {user_known_words}"
     chat_history.append({"role": "system", "content": system_message})
     
-    welcome_message_in_learning_language = text_in_base_language(learning_language_code, f"Hello, I can help you to learn {learning_language_name}!")
+    welcome_message_in_learning_language = translate_to_language(learning_language_code, f"Hello, I can help you to learn {learning_language_name}!")
     chat_history.append({"role": "assistant", "content": welcome_message_in_learning_language})  
     bot.reply_to(message, {welcome_message_in_learning_language})
 
     information_message_in_base_language = "Remember you can end the conversation anytime by typig the following:"
-    information_message_in_base_language = f"{text_in_base_language(base_language_code, information_message_in_base_language)}: <b>end</b>"
+    information_message_in_base_language = f"{translate_to_language(base_language_code, information_message_in_base_language)}: <b>end</b>"
     bot.send_message(message.chat.id, information_message_in_base_language)
     _manageConversation(message, bot, chat_history, base_language_code)
 
@@ -67,7 +67,7 @@ def _get_llm_response(user_message, chat_history, bot, base_language_code):
     bot: the bot object to send the message
     """
     if user_message.text == "end":
-        end_message = text_in_base_language(base_language_code, "<b>Conversation ended</b>")
+        end_message = translate_to_language(base_language_code, "<b>Conversation ended</b>")
         bot.reply_to(user_message, end_message, parse_mode='HTML')
     else:
         chat_history.append({"role": "user", "content": user_message.text})
