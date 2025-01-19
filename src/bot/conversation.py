@@ -29,9 +29,8 @@ def initializeConversation(message, bot):
     chat_history.append({"role": "assistant", "content": welcome_message_in_learning_language})  
     bot.reply_to(message, {welcome_message_in_learning_language})
 
-    information_message_in_base_language = "Remember you can end the conversation anytime by typig `end`"
-    additional_system_message_instructions = "Do not translate the word 'end' (cause that's the command the user needs in the chatbot)"
-    information_message_in_base_language = text_in_base_language(base_language_code, information_message_in_base_language, additional_system_message_instructions)
+    information_message_in_base_language = "Remember you can end the conversation anytime by typig the following:"
+    information_message_in_base_language = f"{text_in_base_language(base_language_code, information_message_in_base_language)}: <b>end</b>"
     bot.send_message(message.chat.id, information_message_in_base_language)
     _manageConversation(message, bot, chat_history, base_language_code)
 
