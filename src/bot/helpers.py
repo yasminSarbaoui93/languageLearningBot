@@ -8,7 +8,7 @@ def send_bot_response(bot, user_message, chat_history: list, language_code: str,
 
     args:
     bot: the bot object to send the message
-    user_message: the message object from the user, needed to know the chat where to send the mweessage
+    user_message: the message object from the user, needed to know the chat where to send the message
     chat_history: the conversation history array
     language_code: the language code of the language to translate the message to
     bot_message: the message to send to the user

@@ -1,7 +1,7 @@
 from src.repository.vocabulary import get_or_create_user
 from src.repository.vocabulary import save_user_base_and_learning_languages
-from services.llm_service import llm_response
-from src.bot.conversation_handling import send_bot_response
+from services.llm_service import extracat_language_code_with_llm
+from bot.helpers import send_bot_response
 
 
 def welcome_handling(user_message, bot):
@@ -75,26 +75,3 @@ def _extract_base_language_code_and_save(user_message, bot, chat_history, learni
 
         bot_message = "Now you can start adding words to your dictionary by typing /add, or see the list of available commands through /help"
         chat_history = send_bot_response(bot, user_message, chat_history, base_language_code, bot_message)
-
-
-def extracat_language_code_with_llm(user_input: str) -> str | None:
-    """
-    Function to extract the language code from the user message. the user message should be the name of the language they want to learn, e.g. spanish, arabo, italiano, frances, etc. 
-    given the user input the llm should respond either with a language code in format ISO 639-1 or ISO 639-2, e.g. 'es' for spanish, 'ar' for arabic, 'it' for italian, 'fr' for french, etc., or respond  with error message, informing the user tbat tbere was a mistake
-    then create an if else. if the result from the llm is a language code, then you can go on with the conversation and ask the user for the base language. if the result is an error message, then you should ask the user to repeat the language they want to learn
-        
-    args:
-    user_message: the message object from the user
-
-    returns:
-    language_code: the language code of the language from user_input
-
-    """
-    system_message = "We ask information about what language the user in interested in, and given the user input, you will have to extract in lower case the language code of the language selected by the user (NOT THE LANGUAGE CODE THAT THE USER IS TYPING IN!!). For example, if the user says 'English', you have to respond 'en', if the user says 'inglese', you have to respond 'en', if the user says 'spagnolo', you have to respond 'es'. In case the user message is not containing infromation around a language (for example they wrote a random word or sentence unrelated), respond with 'None'"
-    messages = []
-    messages.append({"role": "system", "content": system_message})
-    messages.append({"role": "user", "content": user_input})
-    learning_language_code = llm_response(messages)
-    if learning_language_code == "None":
-        return None
-    return learning_language_code

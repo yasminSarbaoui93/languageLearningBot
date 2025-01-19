@@ -3,7 +3,7 @@
 import random
 from src.repository.vocabulary import get_all_words, get_or_create_user
 from services.llm_service import translate_to_language
-from src.bot.conversation_handling import send_bot_response
+from bot.helpers import send_bot_response
 
 
 def send_random_word(bot, message):
