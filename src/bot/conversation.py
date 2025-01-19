@@ -25,13 +25,12 @@ def initializeConversation(message, bot):
     system_message = f"You are a bot that helps students to learn a new language. The language code ISO 639 of the language the student is learning is {learning_language_code} and this is the only language you must speak. You need to have simple conversations in the language they are learning ({learning_language_code}), with short sentences, using mostly present tense. You will mainly use terms from the user's vocabulary user_knowwn_words list, as these are the words the student knows. \nHere is the list of the terms the user knows: {user_known_words}"
     chat_history.append({"role": "system", "content": system_message})
     
-    welcome_message_in_learning_language = translate_to_language(learning_language_code, f"Hello, I can help you to learn {learning_language_name}!")
-    chat_history.append({"role": "assistant", "content": welcome_message_in_learning_language})  
-    bot.reply_to(message, {welcome_message_in_learning_language})
+    bot_message = f"Hello, I can help you to learn {learning_language_name}!"
+    chat_history = respond_to_user(bot, message, chat_history, learning_language_code, bot_message)
 
-    information_message_in_base_language = "Remember you can end the conversation anytime by typig the following:"
-    information_message_in_base_language = f"{translate_to_language(base_language_code, information_message_in_base_language)}: <b>end</b>"
-    bot.send_message(message.chat.id, information_message_in_base_language, parse_mode='HTML')
+    bot_message = f"Remember you can end the conversation anytime by typing the following:"
+    chat_history = respond_to_user(bot, message, chat_history, base_language_code, bot_message, "<b>end</b>")
+
     _manageConversation(message, bot, chat_history, base_language_code)
 
 
@@ -63,14 +62,35 @@ def _get_llm_response(user_message, chat_history, bot, base_language_code):
     """
     if user_message.text == "end":
         #Check if the user wanted to end the conversation with the "end", keyword.
-        end_message = translate_to_language(base_language_code, "<b>Conversation ended</b>")
-        bot.reply_to(user_message, end_message, parse_mode='HTML')
+        respond_to_user(bot, user_message, chat_history, base_language_code, "<b>Conversation ended</b>")
     else:
         chat_history.append({"role": "user", "content": user_message.text})
         ai_response = llm_response(chat_history)
-        chat_history.append(
-            {"role": "assistant", "content": ai_response}
-        )
+        chat_history.append({"role": "assistant", "content": ai_response})
         bot.send_message(user_message.chat.id, ai_response)
         _manageConversation(user_message, bot, chat_history, base_language_code)
         print(f"\n\n{chat_history}")
+
+
+def respond_to_user(bot, user_message, chat_history: list, language_code: str, bot_message: str, word_to_append_to_translation = None) -> list:
+    """
+    Function to respond to the user with a message in the language the user is a selected language, with possibiliy to append a word to the translation of the message that is not to be translated
+
+    args:
+    bot: the bot object to send the message
+    user_message: the message object from the user, needed to know the chat where to send the mweessage
+    chat_history: the conversation history array
+    language_code: the language code of the language to translate the message to
+    bot_message: the message to send to the user
+    (Optional) word_to_append_to_translation: the word to append to the translation of the message, if any
+
+    returns:
+    chat_history: the updated conversation history
+    """
+    bot_message = translate_to_language(language_code, bot_message)
+    if word_to_append_to_translation is None:
+        word_to_append_to_translation = ""
+    bot_message = f"{bot_message} {word_to_append_to_translation}"
+    chat_history.append({"role": "assistant", "content": bot_message})  
+    bot.send_message(user_message.chat.id, bot_message, parse_mode='HTML')
+    return chat_history
