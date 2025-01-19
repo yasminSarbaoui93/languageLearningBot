@@ -61,12 +61,13 @@ def _get_llm_response(user_message, chat_history, bot, base_language_code):
     Function to get responses from OpenAI and continue the conversation
 
     args:
-    user_message: the message object from the user
+    user_message: the message object from the user. If the user message is "end", the conversation will end
     chat_history: the conversation history
     client: the OpenAI client object
     bot: the bot object to send the message
     """
     if user_message.text == "end":
+        #Check if the user wanted to end the conversation with the "end", keyword.
         end_message = translate_to_language(base_language_code, "<b>Conversation ended</b>")
         bot.reply_to(user_message, end_message, parse_mode='HTML')
     else:
