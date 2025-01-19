@@ -1,20 +1,14 @@
 """
 This file contains the functions to be called by the bot that are used to start a conversation with the user and get responses from OpenAI
 """
-import openai
-from openai import OpenAI
-import os
-from dotenv import load_dotenv
-from src.repository.vocabulary import get_all_words, get_or_create_user_id, extract_learning_language_code
-
-
-load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
-client = OpenAI()
-
+from src.repository.vocabulary import get_all_words, get_or_create_user
+from services.llm_service import llm_response, translate_to_language
+from services.language_service import language_name_from_code
+from bot.helpers import send_bot_response
 
 def initializeConversation(message, bot):
-    user_id = get_or_create_user_id(str(message.from_user.id), message.from_user.username, message.from_user.first_name, message.from_user.last_name)
+    user = get_or_create_user(str(message.from_user.id), message.from_user.username, message.from_user.first_name, message.from_user.last_name)
+    user_id = user.id
     all_words = get_all_words(user_id)
     user_known_words = []
     for i in range(len(all_words)):
@@ -23,20 +17,24 @@ def initializeConversation(message, bot):
     print(f"\nDictionary from user {message.from_user.first_name} and dictionary is: containing {len(all_words)} words for all words, and {len(user_known_words)} for user known words\n")
     
     chat_history = []
-    learning_language_code = extract_learning_language_code(user_id)
-    chat_history.append({"role": "system", "content": f"You are a bot that helps students to learn a new language. The language code ISO 639 of the language the student is learning is {learning_language_code} and this is the only language you must speak. You need to have simple conversations in the language they are learning ({learning_language_code}), with short sentences, using mostly present tense. You will mainly use terms from the user's vocabulary user_knowwn_words list, as these are the words the student knows. \nHere is the list of the terms the user knows: {user_known_words}"})
-    if learning_language_code != "de":
-        ai_translation = client.chat.completions.create(model="gpt-4o", messages=[{"role":"user", "content": f"Translate the followin sentence to {learning_language_code}: Hallo, ich kann dir helfen zu 'xxx' zu sprechen! 'yyyy'. Replace 'xxx' with the language the user is learning and replace yyyy with the flag emoji of the country where the language belongs to"}])
-        conversation_starter_message = ai_translation.choices[0].message.content
-    else: 
-        conversation_starter_message = f"Hallo, ich kann dir helfen zu Deutsch zu sprechen! 🇩🇪" + '\n' + "Remember you can end the conversation anytime by typig `end`"
-    chat_history.append({"role": "assistant", "content": conversation_starter_message})  
-    bot.reply_to(message, conversation_starter_message)
+    
+    learning_language_code = user.learning_language
+    learning_language_name = language_name_from_code(learning_language_code)
+    base_language_code = user.base_language
 
-    _manageConversation(message, bot, chat_history)
+    system_message = f"You are a bot that helps students to learn a new language. The language code ISO 639 of the language the student is learning is {learning_language_code} and this is the only language you must speak. You need to have simple conversations in the language they are learning ({learning_language_code}), with short sentences, using mostly present tense. You will mainly use terms from the user's vocabulary user_knowwn_words list, as these are the words the student knows. \nHere is the list of the terms the user knows: {user_known_words}"
+    chat_history.append({"role": "system", "content": system_message})
+    
+    bot_message = f"Hello, I can help you to learn {learning_language_name}!"
+    chat_history = send_bot_response(bot, message, chat_history, learning_language_code, bot_message)
+
+    bot_message = f"Remember you can end the conversation anytime by typing the following:"
+    chat_history = send_bot_response(bot, message, chat_history, base_language_code, bot_message, "<b>end</b>")
+
+    _manageConversation(message, bot, chat_history, base_language_code)
 
 
-def _manageConversation(message, bot, chat_history):
+def _manageConversation(message, bot, chat_history, base_language_code):
     """
     Function to start or continue a conversation with the user and get responses from OpenAI
     
@@ -49,33 +47,26 @@ def _manageConversation(message, bot, chat_history):
     returns:
     chat_history: the conversation history
     """
-    try:
-        bot.register_next_step_handler(message, lambda msg: _get_llm_response(msg, chat_history, client, bot))
-        return chat_history
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return []
+    bot.register_next_step_handler(message, lambda msg: _get_llm_response(msg, chat_history, bot, base_language_code))
 
 
-def _get_llm_response(user_message, chat_history, client, bot):
+def _get_llm_response(user_message, chat_history, bot, base_language_code):
     """
     Function to get responses from OpenAI and continue the conversation
 
     args:
-    user_message: the message object from the user
+    user_message: the message object from the user. If the user message is "end", the conversation will end
     chat_history: the conversation history
     client: the OpenAI client object
     bot: the bot object to send the message
     """
     if user_message.text == "end":
-        bot.reply_to(user_message, "<b>Conversation ended</b>", parse_mode='HTML')
+        #Check if the user wanted to end the conversation with the "end", keyword.
+        send_bot_response(bot, user_message, chat_history, base_language_code, "<b>Conversation ended</b>")
     else:
         chat_history.append({"role": "user", "content": user_message.text})
-        response = client.chat.completions.create(model="gpt-4o", messages=chat_history)
-
-        chat_history.append(
-            {"role": "assistant", "content": response.choices[0].message.content}
-        )
-        bot.send_message(user_message.chat.id, response.choices[0].message.content)
-        _manageConversation(user_message, bot, chat_history)
+        ai_response = llm_response(chat_history)
+        chat_history.append({"role": "assistant", "content": ai_response})
+        bot.send_message(user_message.chat.id, ai_response)
+        _manageConversation(user_message, bot, chat_history, base_language_code)
         print(f"\n\n{chat_history}")
