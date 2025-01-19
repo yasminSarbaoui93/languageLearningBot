@@ -54,5 +54,6 @@ def language_name_from_code(language_code) -> str:
         language = pycountry.languages.get(alpha_2=language_code)
         language_name = language.name
         return language_name
-    except AttributeError:
-        return "Unknown language" 
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return ""
