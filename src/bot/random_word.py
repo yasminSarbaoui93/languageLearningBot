@@ -3,6 +3,7 @@
 import random
 from src.repository.vocabulary import get_all_words, get_or_create_user
 from services.llm_service import translate_to_language
+from src.bot.conversation_handling import send_bot_response
 
 
 def send_random_word(bot, message):
@@ -19,17 +20,15 @@ def send_random_word(bot, message):
     user_known_words = get_all_words(user_id)
     print(f"\nExtracting a random word from dictionary of userid: {user_id} and telegramid: {message.from_user.id} containing {len(user_known_words)} words\n")
     if len(user_known_words) == 0:
-        bot_message_english = "You don't have any words in your dictionary yet. Add some words first by writing /add!"
-        bot_message = translate_to_language(base_language_code, bot_message_english)
-        bot.reply_to(message,bot_message, parse_mode='HTML')
+        bot_message = "You don't have any words in your dictionary yet. Add some words first by writing /add!"
+        send_bot_response(bot, message, [], base_language_code, bot_message)
         return
     else:
         random_word = random.choice(user_known_words)
         base_language_word = random_word[0]
         learning_language_word = random_word[1]
-        bot_message_english = "Translate this word:"
-        bot_message = f"{translate_to_language(base_language_code, bot_message_english)}: <b>{base_language_word}</b>"
-        bot.send_message(message.chat.id, bot_message, parse_mode='HTML')
+        bot_message = "Translate this word:"
+        send_bot_response(bot, message, [], base_language_code, bot_message, base_language_word)
         bot.register_next_step_handler(message, lambda msg: check_response(msg, learning_language_word, bot, base_language_code))
 
 
@@ -43,8 +42,6 @@ def check_response(message, learning_language_word, bot, base_language_code):
     bot: the bot object to send the response
     """
     if message.text == learning_language_word:
-        bot_message = translate_to_language(base_language_code, "Correct!")
-        bot.send_message(message.chat.id, f"{bot_message} ✅")
+        send_bot_response(bot, message, [], base_language_code, "Correct!", "✅")
     else:
-        bot_message = translate_to_language(base_language_code, "Incorrect! ❌\nThe translation is:")
-        bot.send_message(message.chat.id, f"{bot_message} <b>{learning_language_word}</b>", parse_mode='HTML')
+        send_bot_response(bot, message, [], base_language_code, "Incorrect! ❌\nThe translation is:", learning_language_word)
