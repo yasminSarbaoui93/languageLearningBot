@@ -40,6 +40,13 @@ Start the bot with the following command.
 python src/app.py
 ```
 
+## Testing
+
+Run the unit tests with the following command.
+
+```bash
+python -m unittest
+```
 
 # APPENDIX
 
