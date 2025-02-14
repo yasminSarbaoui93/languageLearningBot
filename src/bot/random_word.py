@@ -25,6 +25,7 @@ def send_random_word(bot, message):
         return
     else:
         bot_message = "Let's start! You can end the game at any time by writing <b>end</b>"
+        send_bot_response(bot, message, [], base_language_code, bot_message)
         ask_to_translate_a_word(bot, message, user_known_words, base_language_code)
         
 
@@ -42,10 +43,10 @@ def ask_to_translate_a_word(bot, message, user_known_words, base_language_code):
     learning_language_word = random_word[1]
     bot_message = "Translate this word:"
     send_bot_response(bot, message, [], base_language_code, bot_message, base_language_word)
-    bot.register_next_step_handler(message, lambda msg: check_response(msg, learning_language_word, bot, base_language_code))
+    bot.register_next_step_handler(message, lambda msg: check_response(msg, learning_language_word, bot, base_language_code, user_known_words))
 
 
-def check_response(message, learning_language_word, bot, base_language_code):
+def check_response(message, learning_language_word, bot, base_language_code, user_known_words):
     """
     Function that checks if the user response is correct or not
 
@@ -56,9 +57,10 @@ def check_response(message, learning_language_word, bot, base_language_code):
     """
     if message.text == "end":
         send_bot_response(bot, message, [], base_language_code, "Ending the game! 🛑")
+        return
     if message.text == learning_language_word:
         send_bot_response(bot, message, [], base_language_code, "Correct!", "✅")
-        send_random_word(bot, message)
+        # ask_to_translate_a_word(bot, message, user_known_words, base_language_code)
     else:
         send_bot_response(bot, message, [], base_language_code, "Incorrect! ❌\nThe translation is:", learning_language_word)
-        send_random_word(bot, message)
+    ask_to_translate_a_word(bot, message, user_known_words, base_language_code)
