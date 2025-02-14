@@ -45,6 +45,7 @@ OPENAI_API_KEY="<YOUR_API_KEY>"
 AZURE_RESOURCE_GROUP="<YOUR_AZURE_RESOURCE_GROUP_NAME>"
 COSMOS_ACCOUNT_NAME="<YOUR_COSMOSDB_ACCOUNT_NAME>"
 COSMOS_ACCOUNT_URI="<YOUR_COSMOSDB_ACCOUNT_URI>"
+COSMOS_ACCOUNT_KEY="<YOUR_COSMOSDB_KEY>" #primary or seconday key, NOT the connection string
 LANGUAGESTUDIO_KEY="<YOUR_AZURE_LANGUAGESTUDIO_KEY>"
 LANGUAGESTUDIO_ENDPOINT="<YOUR_AZURE_LANGUAGESTUDIO_ENDPOINT>"
 
@@ -54,7 +55,6 @@ LANGUAGESTUDIO_ENDPOINT="<YOUR_AZURE_LANGUAGESTUDIO_ENDPOINT>"
 For this application, we will ebable connection to cosmos DB from all networks and enable the connection string instead of RBAC
 
 To achieve so, run the following command (they might take a while to execute, so don't worry)
-
 ```
   az resource update \
     --resource-type "Microsoft.DocumentDB/databaseAccounts" \
