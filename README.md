@@ -59,7 +59,7 @@ az cosmosdb sql container create \
 ```
 
 Create the "words" container with partition key "user" in order to store the users vocabulary and to partition it by user
-```
+```bash
 az cosmosdb sql container create \
   --account-name <cosmosdb-account-name> \
   --database-name dictionary \
@@ -70,7 +70,7 @@ az cosmosdb sql container create \
 
 For this application, we will ebable connection to cosmos DB from all networks and enable the connection string instead of RBAC
 To achieve so, run the following command (they might take a while to execute, so don't worry)
-```
+```bash
   az resource update \
     --resource-type "Microsoft.DocumentDB/databaseAccounts" \
     --resource-group <resource-group-name> \
@@ -209,9 +209,9 @@ az containerapp update \
   --name <your-app-name> \
   --resource-group <your-resource-group> \
   --image <your-acr-name>.azurecr.io/<your-image-name>:<new-tag> \
-  --registry-login-server <your-acr-name>.azurecr.io \
-  --registry-username <your-acr-username> \
-  --registry-password <your-acr-password>
+  # --registry-login-server <your-acr-name>.azurecr.io \
+  # --registry-username <your-acr-username> \
+  # --registry-password <your-acr-password>
   ```
 
 Test your app
