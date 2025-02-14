@@ -53,7 +53,7 @@ LANGUAGESTUDIO_ENDPOINT="<YOUR_AZURE_LANGUAGESTUDIO_ENDPOINT>"
 **Cosmos DB configuration**
 For this application, we will ebable connection to cosmos DB from all networks and enable the connection string instead of RBAC
 
-To achieve so, run the following command
+To achieve so, run the following command (they might take a while to execute, so don't worry)
 
 ```
   az resource update \
@@ -64,6 +64,20 @@ To achieve so, run the following command
     --set properties.publicNetworkAccess=Enabled
 ```
 You can find the name of your cosmos db account directly in the Azure portal or running the command ```az cosmosdb list --query "[].name"```. This name have to match the COSMOS_DB_ACCOUNT_NAME in your .env file
+
+Following, we need to add a tag to our cosmos DB account from Azure portal or terminal
+
+Azure portal: 
+![alt text](image.png)
+
+Terminal
+```bash
+az resource update \
+  --resource-group <your-resource-group> \
+  --resource-type "Microsoft.DocumentDB/databaseAccounts" \
+  --name <your-cosmosdb-account-name> \
+  --set tags.SecurityControl="Ignore"
+  ```
 
 ## Run the bot locally
 Start the bot locally with the following command.
