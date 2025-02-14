@@ -189,7 +189,7 @@ docker buildx build --platform linux/amd64,linux/arm64 -t <your-image-name> .
 ```
 > **_NOTE:_** you can consider naming the image already how you would tag it, in order to skip a repeatable step later. Example: `docker buildx build --platform linux/amd64,linux/arm64 -t acrlanguagelearningbot.azurecr.io/languagelearningbot:v0.1.1 . 
 
-Run the image locally to test if the functinalities are working properly.
+Run the image locally to test if the functionalities are working properly.
 ```bash
 docker run --env-file .env <your-image-name>
 ```
