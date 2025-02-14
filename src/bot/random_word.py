@@ -24,12 +24,25 @@ def send_random_word(bot, message):
         send_bot_response(bot, message, [], base_language_code, bot_message)
         return
     else:
-        random_word = random.choice(user_known_words)
-        base_language_word = random_word[0]
-        learning_language_word = random_word[1]
-        bot_message = "Translate this word:"
-        send_bot_response(bot, message, [], base_language_code, bot_message, base_language_word)
-        bot.register_next_step_handler(message, lambda msg: check_response(msg, learning_language_word, bot, base_language_code))
+        bot_message = "Let's start! You can end the game at any time by writing <b>end</b>"
+        ask_to_translate_a_word(bot, message, user_known_words, base_language_code)
+        
+
+def ask_to_translate_a_word(bot, message, user_known_words, base_language_code):
+    """
+    Function that picks a random word from the user known words and asks the user to translate it
+
+    args:
+    bot: the bot object to send the message
+    message: the message object from the user
+    user_known_words: the list of words known by the user
+    """
+    random_word = random.choice(user_known_words)
+    base_language_word = random_word[0]
+    learning_language_word = random_word[1]
+    bot_message = "Translate this word:"
+    send_bot_response(bot, message, [], base_language_code, bot_message, base_language_word)
+    bot.register_next_step_handler(message, lambda msg: check_response(msg, learning_language_word, bot, base_language_code))
 
 
 def check_response(message, learning_language_word, bot, base_language_code):
@@ -41,7 +54,11 @@ def check_response(message, learning_language_word, bot, base_language_code):
     learning_language_word: the correct translation of the word
     bot: the bot object to send the response
     """
+    if message.text == "end":
+        send_bot_response(bot, message, [], base_language_code, "Ending the game! 🛑")
     if message.text == learning_language_word:
         send_bot_response(bot, message, [], base_language_code, "Correct!", "✅")
+        send_random_word(bot, message)
     else:
         send_bot_response(bot, message, [], base_language_code, "Incorrect! ❌\nThe translation is:", learning_language_word)
+        send_random_word(bot, message)
