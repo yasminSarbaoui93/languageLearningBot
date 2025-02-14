@@ -1,0 +1,7 @@
+README.md
+.venv
+assets
+.dockerignore
+#.env
+__pycache__
+.DS_Store
