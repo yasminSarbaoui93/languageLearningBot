@@ -115,7 +115,8 @@ az containerapp env create \
 Obtain Azure Container Registry credentials, username and password will be needed in the following step
 ```bash
 az acr update -n <container-registry-name> --admin-enabled true
-az acr credential show --name <container-registry-name>
+az acr credential show --name acrlanguagelearningbot --query "username" -o tsv
+az acr credential show --name acrlanguagelearningbot --query "passwords[0].value" -o tsv
 ```
 Create the Container App resource
 ```bash

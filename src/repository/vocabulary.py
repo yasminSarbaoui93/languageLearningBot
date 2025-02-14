@@ -12,7 +12,7 @@ from .models import User, Word
 """
 Creating connection to CosmosDB
 """
-load_dotenv()
+# load_dotenv()
 cosmos_endpoint = os.getenv("COSMOS_ACCOUNT_URI")
 cosmos_key = os.getenv("COSMOS_ACCOUNT_KEY")
 if not cosmos_endpoint or not cosmos_key:
