@@ -209,9 +209,6 @@ az containerapp update \
   --name <your-app-name> \
   --resource-group <your-resource-group> \
   --image <your-acr-name>.azurecr.io/<your-image-name>:<new-tag> \
-  # --registry-login-server <your-acr-name>.azurecr.io \
-  # --registry-username <your-acr-username> \
-  # --registry-password <your-acr-password>
   ```
 
 Test your app
