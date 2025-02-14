@@ -13,14 +13,15 @@ from .models import User, Word
 Creating connection to CosmosDB
 """
 load_dotenv()
-credential = DefaultAzureCredential()
 cosmos_endpoint = os.getenv("COSMOS_ACCOUNT_URI")
-if not cosmos_endpoint:
-    raise ValueError("COSMOS_ACCOUNT_URI is not set")
-cosmos_client = CosmosClient(cosmos_endpoint, credential=credential)
+cosmos_key = os.getenv("COSMOS_ACCOUNT_KEY")
+if not cosmos_endpoint or not cosmos_key:
+    raise ValueError("COSMOS_ACCOUNT_URI and COSMOS_ACCOUNT_KEY must be set")
+cosmos_client = CosmosClient(cosmos_endpoint, cosmos_key)
 dictionary_database = cosmos_client.get_database_client("dictionary")
 words_container = dictionary_database.get_container_client("words")
 user_container = dictionary_database.get_container_client("users")
+
 
 
 def get_or_create_user(telegram_id: str, username: str, first_name: str, last_name: str | None) -> User:

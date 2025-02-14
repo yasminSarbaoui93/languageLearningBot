@@ -3,12 +3,12 @@
 A Telegram bot that helps you learn German.
 
 ## Prerequisites
-You need to obtain a telegram BOT API TOKEN.
+You need to obtain a telegram BOT API **TOKEN**.
 
 To do so, open Telegram from your phone or laptop
-Search for the account @BotFather
+Search for the account @**BotFather**
 
-Start a new chat and type the following command: /newbot
+Start a new chat and type the following command: **/newbot**
 
 The bot will respond asking you to chose a Name and then a username for your bot. For this project I have used germanLessons as name and germanLesson_bot as username
 
@@ -68,7 +68,7 @@ You can find the name of your cosmos db account directly in the Azure portal or 
 Following, we need to add a tag to our cosmos DB account from Azure portal or terminal
 
 Azure portal: 
-![alt text](image.png)
+![alt text](readme_attachments/add_cosmos_tag.png)
 
 Terminal
 ```bash
