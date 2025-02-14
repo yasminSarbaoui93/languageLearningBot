@@ -68,7 +68,7 @@ az cosmosdb sql container create \
   --resource-group <resource-group-name>
 ```
 
-For this application, we will ebable connection to cosmos DB from all networks and enable the connection string instead of RBAC
+For this application, we will enable connection to cosmos DB from all networks and enable the connection string instead of RBAC
 To achieve so, run the following command (they might take a while to execute, so don't worry)
 ```bash
   az resource update \
