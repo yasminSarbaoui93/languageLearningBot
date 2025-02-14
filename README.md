@@ -212,3 +212,5 @@ az containerapp update \
   --registry-username <your-acr-username> \
   --registry-password <your-acr-password>
   ```
+
+Test your app
