@@ -87,10 +87,11 @@ python src/app.py
 ```
 
 ## Containerize the app using docker and test running container locally
+Open docker
 
 **Build and tag the image**
 ```bash
-docker build -t your-image-name:version .
+docker build -t <your-image-name>:version .
 ```
 
 example:
