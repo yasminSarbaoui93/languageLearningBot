@@ -45,7 +45,7 @@ def translate_sentence_with_llm(sentence: str, base_language_code: str, addition
     return translation
 
 
-def translate_to_language(base_language_code, text, additional_system_message = None) -> str:
+def translate_to_language(base_language_code, text, additional_system_message = None) -> str | None:
     """
     Function to translate a text to the base language of the user or return the text if the base language is English
 
@@ -84,3 +84,21 @@ def extracat_language_code_with_llm(user_input: str) -> str | None:
     if learning_language_code == "None":
         return None
     return learning_language_code
+
+def check_word_typos(word: str, language_code: str) -> str | None:
+    """
+    Function to check if a word is spelled correctly in a given language
+
+    args:
+    word: the word to be checked
+    language_code: the language code of the language of the word
+
+    returns:
+    corrected_word: the corrected word if it was spelled incorrectly
+    """
+    system_message = f"you are a typo detector and all you have you do check if the given word or set of words have typos or grammatic errors and CORRECT THEM. Do not eliminate the html commands (e.g. <b> or </b>). Do not change for any reason the format (e.g. if the user uses some capital letters, you should keep them or if there are any special characters as / or - or any other). Simply respond with the exact same input format but with the words having no typos or grammatic errors in case you find any, or respond with the exact input in case there are no typos or grammatic errors. The language code of the text is {language_code}."
+    messages = []
+    messages.append({"role": "system", "content": system_message})
+    messages.append({"role": "user", "content": word})
+    corrected_word = llm_response(messages)
+    return corrected_word
