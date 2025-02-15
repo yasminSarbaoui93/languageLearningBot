@@ -60,7 +60,7 @@ def _get_llm_response(user_message, chat_history, bot, base_language_code):
     client: the OpenAI client object
     bot: the bot object to send the message
     """
-    if user_message.text == "end":
+    if user_message.text.lower() == "end":
         #Check if the user wanted to end the conversation with the "end", keyword.
         send_bot_response(bot, user_message, chat_history, base_language_code, "<b>Conversation ended</b>")
     else:

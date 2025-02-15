@@ -55,10 +55,11 @@ def check_response(message, learning_language_word, bot, base_language_code, use
     learning_language_word: the correct translation of the word
     bot: the bot object to send the response
     """
-    if message.text == "end":
+    user_message = message.text.lower()
+    if user_message == "end":
         send_bot_response(bot, message, [], base_language_code, "Ending the game! 🛑")
         return
-    if message.text == learning_language_word:
+    if user_message == learning_language_word.lower():
         send_bot_response(bot, message, [], base_language_code, "Correct!", "✅")
         # ask_to_translate_a_word(bot, message, user_known_words, base_language_code)
     else:
