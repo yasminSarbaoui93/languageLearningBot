@@ -87,7 +87,7 @@ def extracat_language_code_with_llm(user_input: str) -> str | None:
 
 def check_word_typos(word: str, language_code: str) -> str | None:
     """
-    Function to check if a word is spelled correctly in a given language
+    Function to check if a word is spelled correctly in a given language. If the word is spelled incorrectly, the function should return the corrected word without changing the input format
 
     args:
     word: the word to be checked
