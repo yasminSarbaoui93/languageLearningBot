@@ -65,7 +65,7 @@ def get_all_words(user_id: str) -> list[list[str]]:
     return words
 
 
-def save_word(user_id: str, text: str, translation: str):
+def save_word(user, text: str, translation: str):
     """
     Function to save a new word to the dictionary in CosmosDB
 
@@ -76,8 +76,8 @@ def save_word(user_id: str, text: str, translation: str):
     returns:
     boolean: a boolean indicating if the word has been saved or not
     """
-    language_code = detect_language_code(text)
-    translation_language_code = detect_language_code(translation)
+    language_code = user.base_language
+    translation_language_code = user.learning_language
     # Generate an id to store word in cosmos and check, if the generated unique id is already in use
     unique_id = str(uuid.uuid4())
     words_with_same_id = list(words_container.query_items(query="SELECT * FROM c WHERE c.id = @id", parameters=[dict(name="@id", value=unique_id)], enable_cross_partition_query=True))
@@ -93,11 +93,11 @@ def save_word(user_id: str, text: str, translation: str):
         raise Exception("Duplicate word found")
     
     # Save the word to the database
-    new_word = Word(unique_id, user_id, language_code, text, translation, translation_language_code)
+    new_word = Word(unique_id, user.id, language_code, text, translation, translation_language_code)
     words_container.create_item(body=new_word.__dict__)
 
 
-def delete_word(user_id: str, text: str):
+def delete_word(user, text: str):
     """
     Function to delete a word from the dictionary in CosmosDB given the word and its translation
 
@@ -108,11 +108,12 @@ def delete_word(user_id: str, text: str):
     binary: a boolean indicating if at least one word has been deleted or not
     """
     language_code = detect_language_code(text)
-
-    if language_code == "en":
-        query = "SELECT * FROM c WHERE c.user_id = @user_id AND c.text = @text"
-        items = list(words_container.query_items(query, parameters=[dict(name="@text", value=text), dict(name="@user_id", value=user_id)]))
-    else:
+    user_id = user.id
+   
+    query = "SELECT * FROM c WHERE c.user_id = @user_id AND c.text = @text"
+    items = list(words_container.query_items(query, parameters=[dict(name="@text", value=text), dict(name="@user_id", value=user_id)]))
+    
+    if len(items) == 0:
         query = "SELECT * FROM c WHERE c.user_id = @user_id AND c.translation.text = @text"
         items = list(words_container.query_items(query, parameters=[dict(name="@text", value=text), dict(name="@user_id", value=user_id)]))
     

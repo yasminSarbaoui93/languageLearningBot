@@ -40,10 +40,9 @@ def _delete_word(user_message, bot, user):
     bot: the bot object to send messages to the user
     """
     word_to_be_deleted = user_message.text
-    user_id = user.id
     base_language_code = user.base_language
     try:
-        words_deleted = delete_word(user_id, word_to_be_deleted)
+        words_deleted = delete_word(user, word_to_be_deleted)
         if words_deleted:
             bot_message = f"The word <b>{word_to_be_deleted}</b> has been removed from your vocabulary"
             send_bot_response(bot, user_message, [], base_language_code, bot_message)
