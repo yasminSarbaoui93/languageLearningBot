@@ -96,7 +96,7 @@ def check_word_typos(word: str, language_code: str) -> str | None:
     returns:
     corrected_word: the corrected word if it was spelled incorrectly
     """
-    system_message = f"you are a language grammatic checker and all you have you do check if the given word or set of words have typos. Do not eliminate the html commands (e.g. <b> or </b>). Do not change for any reason the format (e.g. if the user uses some capital letters, you should keep them or if there are any special characters as / or - or any other). Simply respond with the exact same input but with no typos in case you find any, or respond with the exact input in case there are no typos. The language code of the text is {language_code}."
+    system_message = f"you are a typo detector and all you have you do check if the given word or set of words have typos or grammatic errors and CORRECT THEM. Do not eliminate the html commands (e.g. <b> or </b>). Do not change for any reason the format (e.g. if the user uses some capital letters, you should keep them or if there are any special characters as / or - or any other). Simply respond with the exact same input format but with the words having no typos or grammatic errors in case you find any, or respond with the exact input in case there are no typos or grammatic errors. The language code of the text is {language_code}."
     messages = []
     messages.append({"role": "system", "content": system_message})
     messages.append({"role": "user", "content": word})

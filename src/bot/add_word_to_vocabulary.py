@@ -59,7 +59,7 @@ def _save_word_to_db(user_message, bot, base_language_word, base_language_code):
     learning_language_word = user_message.text
     user = get_or_create_user(str(user_message.from_user.id), user_message.from_user.username, user_message.from_user.first_name, user_message.from_user.last_name)
     user_id = user.id
-    learning_language_code = user.learning_language_code
+    learning_language_code = user.learning_language
     base_language_word = check_word_typos(base_language_word, base_language_code)
     learning_language_word = check_word_typos(learning_language_word, learning_language_code)
     try:
