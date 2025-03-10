@@ -7,7 +7,7 @@ from azure.cosmos import exceptions, CosmosClient, PartitionKey
 from azure.identity import DefaultAzureCredential
 import uuid
 from services.language_service import detect_language_code
-from .models import User, Word
+from .models import User, Word, Dictionary
 
 """
 Creating connection to CosmosDB
@@ -18,9 +18,11 @@ cosmos_key = os.getenv("COSMOS_ACCOUNT_KEY")
 if not cosmos_endpoint or not cosmos_key:
     raise ValueError("COSMOS_ACCOUNT_URI and COSMOS_ACCOUNT_KEY must be set")
 cosmos_client = CosmosClient(cosmos_endpoint, cosmos_key)
-dictionary_database = cosmos_client.get_database_client("dictionary")
-words_container = dictionary_database.get_container_client("words")
-user_container = dictionary_database.get_container_client("users")
+languagelearningDB = cosmos_client.get_database_client("dictionary")
+words_container = languagelearningDB.get_container_client("words")
+user_container = languagelearningDB.get_container_client("users")
+dictionary_container = languagelearningDB.get_container_client("dictionaries")
+
 
 
 
@@ -50,7 +52,7 @@ def get_or_create_user(telegram_id: str, username: str, first_name: str, last_na
     return user
 
 
-def get_all_words(user_id: str) -> list[list[str]]:
+def get_all_words(dictionary_id: str) -> list[list[str]]:
     """
     Function to get all the words from the dictionary of a user, given its unique telegram_id
 
@@ -60,7 +62,7 @@ def get_all_words(user_id: str) -> list[list[str]]:
     returns:
     words: a list of all the words in the dictionary for the user
     """
-    items = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = @user_id", parameters=[dict(name="@user_id", value=user_id)]))
+    items = list(words_container.query_items(query="SELECT * FROM c WHERE c.dictionary_id = @dictionary_id", parameters=[dict(name="@dictionary_id", value=dictionary_id)]))
     words = [[item['text'], item['translation']['text']] for item in items]
     return words
 

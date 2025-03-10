@@ -5,26 +5,24 @@ class User:
         self.surname = surname
         self.username = username
         self.email = email
-        self.base_language = base_language
-        self.learning_language = learning_language
         self.telegram_id = telegram_id
-        self.active_dictionary = active_dictionary
+        self.active_dictionary = active_dictionary #organized by base_language-learning language, eg en-de
         self.partition_key = partition_key
 
 class Dictionary:
-    def __init__(self, id: str, base_language_code: str, learning_language_code: str, partition_key: str):
+    def __init__(self, id: str, dictionary_name: str, base_language_code: str, learning_language_code: str, user_id: str):
         self.id = id
+        self.dictionary_name = dictionary_name
         self.base_language_code = base_language_code
         self.learning_language_code = learning_language_code
-        self.partition_key = partition_key
+        self.user_id = user_id
 
 class Word:
-    def __init__(self, id: str, user_id: str, language_code: str, text: str, translation_text: str, translation_language_code: str):
+    def __init__(self, id: str, dictionary_id: str, base_language_code: str, base_language_word: str, learning_language_code: str, learning_language_word: str):
         self.id = id
-        self.user_id = user_id
-        self.language_code = language_code
-        self.text = text
-        self.translation = {
-            "text": translation_text,
-            "language_code": translation_language_code
-        }
+        self.dictionary_id = dictionary_id
+        self.base_language_code = base_language_code
+        self.base_language_word = base_language_word
+        self.learning_language_code = learning_language_code
+        self.learning_language_word = learning_language_word
+    
