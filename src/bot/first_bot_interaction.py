@@ -1,5 +1,4 @@
-from src.repository.vocabulary import get_or_create_user
-from src.repository.vocabulary import save_user_base_and_learning_languages
+from repository.vocabulary import get_or_create_user, save_user_base_and_learning_languages
 from services.llm_service import extracat_language_code_with_llm
 from bot.helpers import send_bot_response
 

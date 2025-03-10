@@ -1,15 +1,17 @@
 """
 This file contains the functions to be called by the bot that are used to start a conversation with the user and get responses from OpenAI
 """
-from src.repository.vocabulary import get_all_words, get_or_create_user
+from src.repository.vocabulary import get_all_words, get_user_dictionary
 from services.llm_service import llm_response, translate_to_language
 from services.language_service import language_name_from_code
 from bot.helpers import send_bot_response
 
 def initializeConversation(message, bot):
-    user = get_or_create_user(str(message.from_user.id), message.from_user.username, message.from_user.first_name, message.from_user.last_name)
-    user_id = user.id
-    all_words = get_all_words(user_id)
+    # user = get_or_create_user(str(message.from_user.id), message.from_user.username, message.from_user.first_name, message.from_user.last_name)
+    # user_id = user.id
+    dictionary = get_user_dictionary(str(message.from_user.id))
+    dictionary_id = dictionary.id
+    all_words = get_all_words(dictionary_id)
     user_known_words = []
     for i in range(len(all_words)):
         user_known_words.append(str(all_words[i][1]))
@@ -18,9 +20,9 @@ def initializeConversation(message, bot):
     
     chat_history = []
     
-    learning_language_code = user.learning_language
+    learning_language_code = dictionary.learning_language_code
     learning_language_name = language_name_from_code(learning_language_code)
-    base_language_code = user.base_language
+    base_language_code = dictionary.base_language_code
 
     system_message = f"You are a bot that helps students to learn a new language. The language code ISO 639 of the language the student is learning is {learning_language_code} and this is the only language you must speak. You need to have simple conversations in the language they are learning ({learning_language_code}), with short sentences, using mostly present tense. You will mainly use terms from the user's vocabulary user_knowwn_words list, as these are the words the student knows. \nHere is the list of the terms the user knows: {user_known_words}"
     chat_history.append({"role": "system", "content": system_message})
@@ -30,7 +32,7 @@ def initializeConversation(message, bot):
 
     bot_message = f"Remember you can end the conversation anytime by typing the following:"
     chat_history = send_bot_response(bot, message, chat_history, base_language_code, bot_message, "<b>end</b>")
-
+    print(f"\n\nchat history at this point should contain one system message and two assistant messages\nHere is the chat history: {chat_history}")
     _manageConversation(message, bot, chat_history, base_language_code)
 
 
@@ -69,4 +71,4 @@ def _get_llm_response(user_message, chat_history, bot, base_language_code):
         chat_history.append({"role": "assistant", "content": ai_response})
         bot.send_message(user_message.chat.id, ai_response)
         _manageConversation(user_message, bot, chat_history, base_language_code)
-        print(f"\n\n{chat_history}")
+        print(f"\n\nchat hostory: {chat_history}")

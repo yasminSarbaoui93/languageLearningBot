@@ -4,7 +4,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 import telebot
 from dotenv import load_dotenv
 from bot.random_word import send_random_word
-from src.bot.conversation import initializeConversation
+from bot.conversation import initializeConversation
 from bot.add_word_to_vocabulary import add_word_to_dictionary
 from bot.delete_word_from_vocabulary import remove_word
 from bot.first_bot_interaction import welcome_handling

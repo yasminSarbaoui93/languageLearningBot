@@ -1,7 +1,7 @@
 """This file contains the functions to be called by the bot that are used to get a random word from the dictionary and ask the user to translate it
 """
 import random
-from src.repository.vocabulary import get_all_words, get_or_create_user
+from repository.vocabulary import get_all_words, get_user_dictionary
 from services.llm_service import translate_to_language
 from bot.helpers import send_bot_response
 
@@ -14,11 +14,11 @@ def send_random_word(bot, message):
     bot: the bot object to send the message
     message: the message object from the user
     """
-    user = get_or_create_user(str(message.from_user.id), message.from_user.username, message.from_user.first_name, message.from_user.last_name)
-    user_id = user.id
-    base_language_code = user.base_language
-    user_known_words = get_all_words(user_id)
-    print(f"\nExtracting a random word from dictionary of userid: {user_id} and telegramid: {message.from_user.id} containing {len(user_known_words)} words\n")
+    dictionary = get_user_dictionary(str(message.from_user.id))
+    dictionary_id = dictionary.id
+    base_language_code = dictionary.base_language_code
+    user_known_words = get_all_words(dictionary_id)
+    print(f"\nExtracting a random word from dictionary of dictionary_id: {dictionary_id} and telegramid: {message.from_user.id} containing {len(user_known_words)} words\n")
     if len(user_known_words) == 0:
         bot_message = "You don't have any words in your dictionary yet. Add some words first by writing /add!"
         send_bot_response(bot, message, [], base_language_code, bot_message)

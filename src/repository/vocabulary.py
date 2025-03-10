@@ -150,18 +150,18 @@ def delete_word(dictionary, word_to_be_deleted: str):
         return False
     
 
-# def save_user_base_and_learning_languages(user_id: str, base_language: str, learning_language: str):
-#     """
-#     Function to add the base language and learning language to the user in the database
+def save_user_base_and_learning_languages(user_id: str, base_language: str, learning_language: str):
+    """
+    Function to add the base language and learning language to the user in the database
 
-#     args:
-#     base_language: the base language of the user
-#     learning_language: the language the user wants to learn
-#     """
-#     user = user_container.read_item(item=user_id, partition_key="shared")
-#     user_container.upsert_item(body=user)
-#     updated_user = User(user_id, user["name"], user["surname"], user["username"],user["email"], base_language, learning_language, user["telegram_id"], user["partition_key"])
-#     user_container.upsert_item(body=updated_user.__dict__)
+    args:
+    base_language: the base language of the user
+    learning_language: the language the user wants to learn
+    """
+    user = user_container.read_item(item=user_id, partition_key="shared")
+    user_container.upsert_item(body=user)
+    updated_user = User(user_id, user["name"], user["surname"], user["username"],user["email"], base_language, learning_language, user["telegram_id"], user["partition_key"])
+    user_container.upsert_item(body=updated_user.__dict__)
 
 
 
