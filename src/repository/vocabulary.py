@@ -44,11 +44,11 @@ def get_or_create_user(telegram_id: str, username: str, first_name: str, last_na
     items = list(user_container.query_items(query, parameters=[dict(name="@telegram_id", value=telegram_id)]))
     if len(items) == 0:
         user_id = str(uuid.uuid4())
-        new_user = User(user_id, first_name, str(last_name), username, "", "", "", telegram_id, "shared")
+        new_user = User(user_id, first_name, str(last_name), username, telegram_id, "", "shared")
         user_container.create_item(body=new_user.__dict__)
         return new_user    
     db_user = items[0]
-    user = User(db_user["id"], db_user["name"], db_user["surname"], db_user["username"], db_user["email"], db_user["base_language"], db_user["learning_language"], db_user["telegram_id"], db_user["partition_key"])
+    user = User(db_user["id"], db_user["name"], db_user["surname"], db_user["username"], db_user["email"], db_user["telegram_id"], db_user["active_dictionary"], db_user["partition_key"])
     return user
 
 
@@ -67,7 +67,7 @@ def get_all_words(dictionary_id: str) -> list[list[str]]:
     return words
 
 
-def save_word(user, text: str, translation: str):
+def save_word(dictionary, base_language_word: str, learning_language_word: str):
     """
     Function to save a new word to the dictionary in CosmosDB
 
@@ -78,8 +78,9 @@ def save_word(user, text: str, translation: str):
     returns:
     boolean: a boolean indicating if the word has been saved or not
     """
-    language_code = user.base_language
-    translation_language_code = user.learning_language
+    base_language_code = dictionary.base_language_code
+    learning_language_code = dictionary.learning_language_code
+    dictionary_id = dictionary.id
     # Generate an id to store word in cosmos and check, if the generated unique id is already in use
     unique_id = str(uuid.uuid4())
     words_with_same_id = list(words_container.query_items(query="SELECT * FROM c WHERE c.id = @id", parameters=[dict(name="@id", value=unique_id)], enable_cross_partition_query=True))
@@ -90,16 +91,16 @@ def save_word(user, text: str, translation: str):
         num_words_with_same_id = len(words_with_same_id)
 
     # Check, if the word is already in the dictionary
-    duplicate_words = list(words_container.query_items(query="SELECT * FROM c WHERE c.user_id = '553fcaa0-2530-472c-9126-ffec24c62a6c' AND c.text = @text AND c.translation.text = @translation", parameters=[dict(name="@text", value=text), dict(name="@translation", value=translation)]))
+    duplicate_words = list(words_container.query_items(query="SELECT * FROM c WHERE c.dictionary_id = @dictionary_id AND c.base_language_word = @base_language_word AND c.learning_language_word = @learning_language_word", parameters=[dict(name="@base_language_word", value=base_language_word), dict(name="@learning_language_code", value=learning_language_word), dict(name="@dictionary_id", value=dictionary_id)]))
     if len(duplicate_words) != 0:
         raise Exception("Duplicate word found")
     
     # Save the word to the database
-    new_word = Word(unique_id, user.id, language_code, text, translation, translation_language_code)
+    new_word = Word(unique_id, dictionary_id, base_language_code, base_language_word, learning_language_code, learning_language_word)
     words_container.create_item(body=new_word.__dict__)
 
 
-def delete_word(user, text: str):
+def delete_word(dictionary, word_to_be_deleted: str):
     """
     Function to delete a word from the dictionary in CosmosDB given the word and its translation
 
@@ -109,48 +110,49 @@ def delete_word(user, text: str):
     returns:
     binary: a boolean indicating if at least one word has been deleted or not
     """
-    language_code = detect_language_code(text)
-    user_id = user.id
+    dictionary_id = dictionary.id
    
-    query = "SELECT * FROM c WHERE c.user_id = @user_id AND c.text = @text"
-    items = list(words_container.query_items(query, parameters=[dict(name="@text", value=text), dict(name="@user_id", value=user_id)]))
+    query = "SELECT * FROM c WHERE c.dictionary_id = @dictionary_id AND c.base_language_word = @word_to_be_deleted"
+    items = list(words_container.query_items(query, parameters=[dict(name="@base_language_word", value=word_to_be_deleted), dict(name="@dictionary_id", value=dictionary_id)]))
     
     if len(items) == 0:
-        query = "SELECT * FROM c WHERE c.user_id = @user_id AND c.translation.text = @text"
-        items = list(words_container.query_items(query, parameters=[dict(name="@text", value=text), dict(name="@user_id", value=user_id)]))
+        query = "SELECT * FROM c WHERE c.dictionary_id = @dictionary_id AND c.learning_language_word = @word_to_be_deleted"
+        items = list(words_container.query_items(query, parameters=[dict(name="@learning_language_word", value=word_to_be_deleted), dict(name="@dictionary_id", value=dictionary_id)]))
     
     # Check if there are any words to delete
     if len(items) != 0:
         for item in items:
-            words_container.delete_item(item, partition_key=item['user_id']) 
+            words_container.delete_item(item, partition_key=item['dictionary_id']) 
         return True
     else:
         # No words to delete found.
         return False
     
 
-def save_user_base_and_learning_languages(user_id: str, base_language: str, learning_language: str):
-    """
-    Function to add the base language and learning language to the user in the database
+# def save_user_base_and_learning_languages(user_id: str, base_language: str, learning_language: str):
+#     """
+#     Function to add the base language and learning language to the user in the database
 
-    args:
-    base_language: the base language of the user
-    learning_language: the language the user wants to learn
-    """
-    user = user_container.read_item(item=user_id, partition_key="shared")
-    user_container.upsert_item(body=user)
-    updated_user = User(user_id, user["name"], user["surname"], user["username"],user["email"], base_language, learning_language, user["telegram_id"], user["partition_key"])
-    user_container.upsert_item(body=updated_user.__dict__)
+#     args:
+#     base_language: the base language of the user
+#     learning_language: the language the user wants to learn
+#     """
+#     user = user_container.read_item(item=user_id, partition_key="shared")
+#     user_container.upsert_item(body=user)
+#     updated_user = User(user_id, user["name"], user["surname"], user["username"],user["email"], base_language, learning_language, user["telegram_id"], user["partition_key"])
+#     user_container.upsert_item(body=updated_user.__dict__)
 
-def extract_learning_language_code(user_id: str) -> str:
-    """
-    Function to extract the learning language of the user from the database
 
-    args:
-    user_id: the user id to get the learning language for
 
-    returns:
-    learning_language: the language the user wants to learn
-    """
-    user = user_container.read_item(item=user_id, partition_key="shared")
-    return user["learning_language"]
+# def extract_learning_language_code(user_id: str) -> str:
+#     """
+#     Function to extract the learning language of the user from the database
+
+#     args:
+#     user_id: the user id to get the learning language for
+
+#     returns:
+#     learning_language: the language the user wants to learn
+#     """
+#     user = user_container.read_item(item=user_id, partition_key="shared")
+#     return user["learning_language"]
