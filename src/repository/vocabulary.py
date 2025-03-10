@@ -48,9 +48,30 @@ def get_or_create_user(telegram_id: str, username: str, first_name: str, last_na
         user_container.create_item(body=new_user.__dict__)
         return new_user    
     db_user = items[0]
-    user = User(db_user["id"], db_user["name"], db_user["surname"], db_user["username"], db_user["email"], db_user["telegram_id"], db_user["active_dictionary"], db_user["partition_key"])
+    user = User(db_user["id"], db_user["name"], db_user["surname"], db_user["username"], db_user["email"], db_user["telegram_id"], db_user["active_dictionary_id"], db_user["partition_key"])
     return user
 
+def get_user_dictionary(telegram_id: str) -> Dictionary:
+    """
+    Function to get the dictionary in use by the user
+    args:
+    telegram_id: the telegram id of the user, user_message.from_user.id
+    returns:
+    dictionary: the dictionary in use by the user
+
+    """
+    telegram_id = str(telegram_id)
+    query = "SELECT * FROM c WHERE c.telegram_id = @telegram_id AND c.partition_key = 'shared'"
+    user = get_or_create_user(telegram_id, "", "", "")
+    dictionary_id = user.active_dictionary_id
+    if dictionary_id == "":
+        raise Exception("No dictionary found for the user")
+    items = list(dictionary_container.query_items(query="SELECT * FROM c WHERE c.id = @dictionary_id", parameters=[dict(name="@dictionary_id", value=dictionary_id)]))
+    if len(items) == 0:
+        raise Exception("No dictionary found for the user")
+    db_dictionary = items[0]
+    dictionary = Dictionary(db_dictionary["id"], db_dictionary["dictionary_name"], db_dictionary["base_language_code"], db_dictionary["learning_language_code"], db_dictionary["user_id"])
+    return dictionary
 
 def get_all_words(dictionary_id: str) -> list[list[str]]:
     """
