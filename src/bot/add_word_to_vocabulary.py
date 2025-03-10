@@ -1,6 +1,6 @@
 """This file contains the function to be called by the bot to add a new word to the dictionary"""
 from src.repository.vocabulary import save_word
-from src.repository.vocabulary import get_or_create_user, get_user_dictionary
+from src.repository.vocabulary import get_user_dictionary
 from bot.helpers import send_bot_response
 from services.language_service import language_name_from_code
 from services.llm_service import check_word_typos
@@ -24,7 +24,6 @@ def _ask_for_base_language_word(user_message, bot):
     user_message: the message object from the user
     bot: the bot object to send the message
     """
-    # user = get_or_create_user(str(user_message.from_user.id), user_message.from_user.username, user_message.from_user.first_name, user_message.from_user.last_name)
     dictionary = get_user_dictionary(user_message.from_user.id)
     base_language_code = dictionary.base_language_code
     base_language_name = language_name_from_code(base_language_code)
@@ -59,8 +58,6 @@ def _save_word_to_db(user_message, bot, base_language_word, base_language_code, 
     bot: the bot object to send the message
     """
     learning_language_word = user_message.text
-    # user = get_or_create_user(str(user_message.from_user.id), user_message.from_user.username, user_message.from_user.first_name, user_message.from_user.last_name)
-    # user_id = user.id
     base_language_word = check_word_typos(base_language_word, base_language_code)
     learning_language_word = check_word_typos(learning_language_word, learning_language_code)
     try:
