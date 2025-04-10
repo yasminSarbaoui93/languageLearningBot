@@ -1,9 +1,9 @@
 """
 This file contains the functions to be called by the bot that are used to start a conversation with the user and get responses from OpenAI
 """
-from src.repository.vocabulary import get_all_words, get_user_dictionary
-from services.llm_service import llm_response, translate_to_language
-from services.language_service import language_name_from_code
+from repository.vocabulary import get_all_words, get_user_dictionary
+from bot_services.llm_service import llm_response, translate_to_language
+from bot_services.language_service import language_name_from_code
 from bot.helpers import send_bot_response
 
 def initializeConversation(message, bot):

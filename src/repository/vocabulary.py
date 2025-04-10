@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 from azure.cosmos import exceptions, CosmosClient, PartitionKey
 from azure.identity import DefaultAzureCredential
 import uuid
-from services.language_service import detect_language_code
 from .models import User, Word, Dictionary
 
 """
@@ -41,10 +40,14 @@ def get_or_create_user(telegram_id: str, username: str, first_name: str, last_na
     """
     telegram_id = str(telegram_id)
     query = "SELECT * FROM c WHERE c.telegram_id = @telegram_id AND c.partition_key = 'shared'"
-    items = list(user_container.query_items(query, parameters=[dict(name="@telegram_id", value=telegram_id)]))
+    try:
+        items = list(user_container.query_items(query, parameters=[dict(name="@telegram_id", value=telegram_id)]))
+    except:
+        print(f"An error occurred while querying the database")
+        items = []
     if len(items) == 0:
         user_id = str(uuid.uuid4())
-        new_user = User(user_id, first_name, str(last_name), username, telegram_id, "", "shared")
+        new_user = User(user_id, first_name, str(last_name), username, "", telegram_id, "", "shared")
         user_container.create_item(body=new_user.__dict__)
         return new_user    
     db_user = items[0]

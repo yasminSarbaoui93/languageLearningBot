@@ -2,7 +2,7 @@
 This file contains the functions to be called by the bot to add a new word to the user's vocabulary
 """
 import os
-from src.repository.vocabulary import delete_word, get_user_dictionary
+from repository.vocabulary import delete_word, get_user_dictionary
 from bot.helpers import send_bot_response
 
 def remove_word(user_message, bot):

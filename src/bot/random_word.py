@@ -2,7 +2,7 @@
 """
 import random
 from repository.vocabulary import get_all_words, get_user_dictionary
-from services.llm_service import translate_to_language
+# from services.llm_service import translate_to_language
 from bot.helpers import send_bot_response
 
 

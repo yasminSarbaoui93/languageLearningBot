@@ -1,4 +1,4 @@
-from services.llm_service import translate_to_language
+from bot_services.llm_service import translate_to_language
 
 
 

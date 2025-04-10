@@ -1,9 +1,9 @@
 """This file contains the function to be called by the bot to add a new word to the dictionary"""
-from src.repository.vocabulary import save_word
-from src.repository.vocabulary import get_user_dictionary
+from repository.vocabulary import save_word
+from repository.vocabulary import get_user_dictionary
 from bot.helpers import send_bot_response
-from services.language_service import language_name_from_code
-from services.llm_service import check_word_typos
+from bot_services.language_service import language_name_from_code
+from bot_services.llm_service import check_word_typos
 
 def add_word_to_dictionary(user_message, bot):
     """
